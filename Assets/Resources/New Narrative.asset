@@ -16,40 +16,40 @@ MonoBehaviour:
   - BaseNodeGUID: 3ed0a0f4-bcfa-4520-855a-16d39a80bfb8
     PortName: Next
     TargetNodeGUID: da703f2b-7926-4234-ac6b-1840bac1a8dd
+  - BaseNodeGUID: 77db741c-717d-4243-a8e8-1905c504af46
+    PortName: Next
+    TargetNodeGUID: ee5e61f7-d90c-4037-bc2e-ab3385f25409
   - BaseNodeGUID: da703f2b-7926-4234-ac6b-1840bac1a8dd
     PortName: Option 1
     TargetNodeGUID: b7b79d91-e739-44f2-a33b-8ce42458c27d
-  - BaseNodeGUID: b7b79d91-e739-44f2-a33b-8ce42458c27d
-    PortName: Option 1
-    TargetNodeGUID: 77db741c-717d-4243-a8e8-1905c504af46
-  - BaseNodeGUID: 77db741c-717d-4243-a8e8-1905c504af46
-    PortName: Option 1
-    TargetNodeGUID: ee5e61f7-d90c-4037-bc2e-ab3385f25409
   - BaseNodeGUID: da703f2b-7926-4234-ac6b-1840bac1a8dd
     PortName: Option 2
     TargetNodeGUID: 0b34f244-7db0-49bd-a439-b17a616ea3f9
+  - BaseNodeGUID: b7b79d91-e739-44f2-a33b-8ce42458c27d
+    PortName: Next
+    TargetNodeGUID: 77db741c-717d-4243-a8e8-1905c504af46
   - BaseNodeGUID: 0b34f244-7db0-49bd-a439-b17a616ea3f9
     PortName: Option 1
     TargetNodeGUID: a67abc80-1944-4bfb-a3de-5c9bec176661
   DialogueNodeData:
   - NodeGUID: ee5e61f7-d90c-4037-bc2e-ab3385f25409
-    DialogueText: Dialogue Node
+    DialogueText: "\uB044\uC73C\uC73C\uC73C\uC74F\u3145"
     Position: {x: 1093.6, y: 200}
   - NodeGUID: 77db741c-717d-4243-a8e8-1905c504af46
-    DialogueText: Dialogue Node
+    DialogueText: "\uB07C\uC57D"
     Position: {x: 799.2, y: 195.2}
-  - NodeGUID: da703f2b-7926-4234-ac6b-1840bac1a8dd
-    DialogueText: Dialogue Node
-    Position: {x: 253.6, y: 204.8}
   - NodeGUID: b7b79d91-e739-44f2-a33b-8ce42458c27d
-    DialogueText: Dialogue Node
+    DialogueText: "\uBC14\uBCF4"
     Position: {x: 511.2, y: 203.2}
   - NodeGUID: 0b34f244-7db0-49bd-a439-b17a616ea3f9
-    DialogueText: Dialogue Node
+    DialogueText: "\uC9DC\uC790\uC794"
     Position: {x: 510.4, y: 361.6}
   - NodeGUID: a67abc80-1944-4bfb-a3de-5c9bec176661
-    DialogueText: Dialogue Node
+    DialogueText: "\uB044\uC74F"
     Position: {x: 798.4, y: 349.6}
+  - NodeGUID: da703f2b-7926-4234-ac6b-1840bac1a8dd
+    DialogueText: "\uC774\uC57C\uC57C\uC57C\uC57C\uC58D"
+    Position: {x: 253.6, y: 204.8}
   ExposedProperties:
   - PropertyName: New String
     PropertyValue: New Value

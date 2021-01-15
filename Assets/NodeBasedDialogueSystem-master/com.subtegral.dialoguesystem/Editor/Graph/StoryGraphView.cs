@@ -142,9 +142,12 @@ namespace Subtegral.DialogueSystem.Editor
                 GUID = Guid.NewGuid().ToString()
             };
             tempDialogueNode.styleSheets.Add(Resources.Load<StyleSheet>("Node"));
+
+            // input 포트 생성
             var inputPort = GetPortInstance(tempDialogueNode, Direction.Input, Port.Capacity.Multi);
             inputPort.portName = "Input";
             tempDialogueNode.inputContainer.Add(inputPort);
+
             tempDialogueNode.RefreshExpandedState();
             tempDialogueNode.RefreshPorts();
             tempDialogueNode.SetPosition(new Rect(position,
@@ -163,7 +166,8 @@ namespace Subtegral.DialogueSystem.Editor
             {
                 text = "Add Choice"
             };
-            tempDialogueNode.titleButtonContainer.Add(button);
+            tempDialogueNode.titleButtonContainer.Add(button); 
+
             return tempDialogueNode;
         }
 
@@ -176,7 +180,7 @@ namespace Subtegral.DialogueSystem.Editor
 
             var outputPortCount = nodeCache.outputContainer.Query("connector").ToList().Count();
             var outputPortName = string.IsNullOrEmpty(overriddenPortName)
-                ? $"Option {outputPortCount + 1}"
+                ? $"Option {outputPortCount}"
                 : overriddenPortName;
 
 

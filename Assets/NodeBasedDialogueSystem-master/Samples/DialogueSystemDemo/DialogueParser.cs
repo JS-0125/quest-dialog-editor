@@ -14,7 +14,10 @@ namespace Subtegral.DialogueSystem.Runtime
         [SerializeField] private DialogueContainer dialogue;
         [SerializeField] private TextMeshProUGUI dialogueText;
         [SerializeField] private Button choicePrefab;
+        [SerializeField] private Button nextPrefab;
         [SerializeField] private Transform buttonContainer;
+        [SerializeField] private Transform nextButtonTransform;
+
 
         private void Start()
         {
@@ -33,6 +36,17 @@ namespace Subtegral.DialogueSystem.Runtime
                 Destroy(buttons[i].gameObject);
             }
 
+            // chioce가 1개 == 다음 버튼
+            if(choices.Count() == 1)
+            {
+                var choice = choices.ToList();
+                var button = Instantiate(nextPrefab, nextButtonTransform);
+                button.GetComponentInChildren<Text>().text = ProcessProperties(choice[0].PortName);
+                button.onClick.AddListener(() => ProceedToNarrative(choice[0].TargetNodeGUID));
+                return;
+            }
+
+            // 선택지가 있을 때
             foreach (var choice in choices)
             {
                 var button = Instantiate(choicePrefab, buttonContainer);
