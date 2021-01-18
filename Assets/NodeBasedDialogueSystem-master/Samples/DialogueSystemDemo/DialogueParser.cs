@@ -36,8 +36,17 @@ namespace Subtegral.DialogueSystem.Runtime
                 Destroy(buttons[i].gameObject);
             }
 
+            // 대화가 끝날 때
+            if (choices.Count() == 0)
+            {
+                var choice = choices.ToList();
+                var button = Instantiate(nextPrefab, nextButtonTransform);
+                button.onClick.AddListener(() => EndDialogue());
+                return;
+            }
+
             // chioce가 1개 == 다음 버튼
-            if(choices.Count() == 1)
+            if (choices.Count() == 1)
             {
                 var choice = choices.ToList();
                 var button = Instantiate(nextPrefab, nextButtonTransform);
@@ -46,7 +55,7 @@ namespace Subtegral.DialogueSystem.Runtime
                 return;
             }
 
-            // 선택지가 있을 때
+            // chioce가 2개 이상 == 선택지가 있을 때
             foreach (var choice in choices)
             {
                 var button = Instantiate(choicePrefab, buttonContainer);
@@ -62,6 +71,11 @@ namespace Subtegral.DialogueSystem.Runtime
                 text = text.Replace($"[{exposedProperty.PropertyName}]", exposedProperty.PropertyValue);
             }
             return text;
+        }
+
+        private void EndDialogue()
+        {
+            dialogueText.transform.parent.gameObject.SetActive(false);
         }
     }
 }
