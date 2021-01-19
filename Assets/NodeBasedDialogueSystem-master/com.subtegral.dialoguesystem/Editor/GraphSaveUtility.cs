@@ -66,6 +66,9 @@ namespace Subtegral.DialogueSystem.Editor
                 EditorUtility.SetDirty(container);
             }
 
+            // json 파일로 저장
+            File.WriteAllText(Application.dataPath + "/Resources/data.json", JsonUtility.ToJson(dialogueContainerObject));
+
             AssetDatabase.SaveAssets();
         }
 
@@ -122,12 +125,24 @@ namespace Subtegral.DialogueSystem.Editor
 
         public void LoadNarrative(string fileName)
         {
-            _dialogueContainer = Resources.Load<DialogueContainer>(fileName);
-            if (_dialogueContainer == null)
-            {
-                EditorUtility.DisplayDialog("File Not Found", "Target Narrative Data does not exist!", "OK");
-                return;
-            }
+            //_dialogueContainer = Resources.Load<DialogueContainer>(fileName);
+            //if (_dialogueContainer == null)
+            //{
+            //    EditorUtility.DisplayDialog("File Not Found", "Target Narrative Data does not exist!", "OK");
+            //    return;
+            //}
+
+            // json 파일 불러오기
+            string jsonString = File.ReadAllText(Application.dataPath + "/Resources/data.json");
+
+            // parse 디버깅
+            Debug.Log(jsonString);
+            
+            // new 
+            _dialogueContainer = ScriptableObject.CreateInstance<DialogueContainer>();
+
+            // ScriptableObject나 MonoBehavior를 상속받았을 시, JsonUtility.FromJson말고 JsonUtility.FromJsonOverwrite만 지원
+            JsonUtility.FromJsonOverwrite(jsonString, _dialogueContainer);
 
             ClearGraph();
             GenerateDialogueNodes();
