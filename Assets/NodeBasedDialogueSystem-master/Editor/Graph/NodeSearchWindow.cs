@@ -8,14 +8,16 @@ using UnityEngine.UIElements;
 
 namespace Subtegral.DialogueSystem.Editor
 {
-    public class NodeSearchWindow : ScriptableObject,ISearchWindowProvider
+    public class NodeSearchWindow<T, V> : ScriptableObject,ISearchWindowProvider where T : AbstractGraph where V : EditorWindow
     {
-        private EditorWindow _window;
-        private StoryGraphView _graphView;
+        // graph view class
+        private T _graphView;
+
+        private V _window;
 
         private Texture2D _indentationIcon;
-        
-        public void Configure(EditorWindow window,StoryGraphView graphView)
+
+        public void Configure(V window,T graphView)
         {
             _window = window;
             _graphView = graphView;
@@ -31,8 +33,8 @@ namespace Subtegral.DialogueSystem.Editor
             var tree = new List<SearchTreeEntry>
             {
                 new SearchTreeGroupEntry(new GUIContent("Create Node"), 0),
-                new SearchTreeGroupEntry(new GUIContent("Dialogue"), 1),
-                new SearchTreeEntry(new GUIContent("Dialogue Node", _indentationIcon))
+                new SearchTreeGroupEntry(new GUIContent("Node"), 1),
+                new SearchTreeEntry(new GUIContent("Node", _indentationIcon))
                 {
                     level = 2, userData = new DialogueNode()
                 },
@@ -55,7 +57,7 @@ namespace Subtegral.DialogueSystem.Editor
             switch (SearchTreeEntry.userData)
             {
                 case DialogueNode dialogueNode:
-                    _graphView.CreateNewDialogueNode("Dialogue Node",graphMousePosition);
+                    _graphView.CreateNewNode("Node",graphMousePosition);
                     return true;
                 case Group group:
                     var rect = new Rect(graphMousePosition, _graphView.DefaultCommentBlockSize);

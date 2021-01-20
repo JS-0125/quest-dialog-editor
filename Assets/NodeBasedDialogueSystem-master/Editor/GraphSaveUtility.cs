@@ -67,7 +67,7 @@ namespace Subtegral.DialogueSystem.Editor
             }
 
             // json 파일로 저장
-            File.WriteAllText(Application.dataPath + "/Resources/data.json", JsonUtility.ToJson(dialogueContainerObject));
+            File.WriteAllText(Application.dataPath + $"/Resources/{fileName}.json", JsonUtility.ToJson(dialogueContainerObject));
 
             AssetDatabase.SaveAssets();
         }
@@ -133,7 +133,7 @@ namespace Subtegral.DialogueSystem.Editor
             //}
 
             // json 파일 불러오기
-            string jsonString = File.ReadAllText(Application.dataPath + "/Resources/data.json");
+            string jsonString = File.ReadAllText(Application.dataPath + $"/Resources/{fileName}.json");
 
             // parse 디버깅
             Debug.Log(jsonString);
@@ -142,6 +142,7 @@ namespace Subtegral.DialogueSystem.Editor
             _dialogueContainer = ScriptableObject.CreateInstance<DialogueContainer>();
 
             // ScriptableObject나 MonoBehavior를 상속받았을 시, JsonUtility.FromJson말고 JsonUtility.FromJsonOverwrite만 지원
+            // https://docs.unity3d.com/Manual/JSONSerialization.html?_ga=2.70394898.304792601.1611044230-595836390.1590250109
             JsonUtility.FromJsonOverwrite(jsonString, _dialogueContainer);
 
             ClearGraph();
