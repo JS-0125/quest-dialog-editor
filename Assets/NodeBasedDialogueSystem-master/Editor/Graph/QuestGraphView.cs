@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Subtegral.DialogueSystem.Editor;
+using UnityEditor;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Button = UnityEngine.UIElements.Button;
@@ -69,6 +71,7 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
         };
         tempQuestNode.styleSheets.Add(Resources.Load<StyleSheet>("Node"));
 
+
         // input 포트 생성
         var inputPort = GetPortInstance(tempQuestNode, Direction.Input, Port.Capacity.Multi);
         inputPort.portName = "Input";
@@ -78,6 +81,12 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
         tempQuestNode.RefreshPorts();
         tempQuestNode.SetPosition(new Rect(position,
             DefaultNodeSize)); //To-Do: implement screen center instantiation positioning
+
+        // 오브젝트 필드
+        var objectField = new ObjectField("Quest Giver");
+        tempQuestNode.mainContainer.Add(objectField);
+
+
 
         var textField = new TextField("");
         textField.RegisterValueChangedCallback(evt =>
