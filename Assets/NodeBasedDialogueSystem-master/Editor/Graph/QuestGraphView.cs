@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Subtegral.DialogueSystem.DataContainers;
 using Subtegral.DialogueSystem.Editor;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
@@ -14,7 +15,7 @@ using Button = UnityEngine.UIElements.Button;
 public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualElement
 {
     private NodeSearchWindow<QuestGraphView, QuestGraph> _searchWindow;
-
+    
     public QuestGraphView(QuestGraph editorWindow)
     {
         styleSheets.Add(Resources.Load<StyleSheet>("NarrativeGraph"));
@@ -83,10 +84,19 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
             DefaultNodeSize)); //To-Do: implement screen center instantiation positioning
 
         // 오브젝트 필드
+        // Quest giver 받는 필드
         var objectField = new ObjectField("Quest Giver");
+        objectField.allowSceneObjects = true;
+        objectField.objectType = typeof(GameObject);
         tempQuestNode.mainContainer.Add(objectField);
 
 
+        var enumField = new EnumField("Success Condition", successCondition.ARRIVED);
+        enumField.RegisterValueChangedCallback(evt =>
+        {
+            SuccessCondition(enumField.value, tempQuestNode);
+        });
+        tempQuestNode.extensionContainer.Add(enumField);    
 
         var textField = new TextField("");
         textField.RegisterValueChangedCallback(evt =>
@@ -97,6 +107,7 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
         textField.SetValueWithoutNotify(tempQuestNode.title);
         tempQuestNode.mainContainer.Add(textField);
 
+
         var button = new Button(() => { AddChoicePort(tempQuestNode); })
         {
             text = "Add Choice"
@@ -106,6 +117,55 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
         return tempQuestNode;
     }
 
+    private List<VisualElement> successCoditionFields = new List<VisualElement>();
+
+    private void SuccessCondition(Enum condition, QuestNode tempQuestNode)
+    {
+        for (int i = 0; i < successCoditionFields.Count(); ++i)
+            tempQuestNode.extensionContainer.Remove(successCoditionFields[i]);
+
+        successCoditionFields.Clear();
+
+        switch (condition)
+        {
+            case successCondition.ARRIVED:
+                var destination = new ObjectField("Destination");
+                destination.allowSceneObjects = true;
+                destination.objectType = typeof(Collider);
+                tempQuestNode.extensionContainer.Add(destination);
+                successCoditionFields.Add(destination);
+                break;
+            case successCondition.COLLECT:
+                var collection = new ObjectField("Collection");
+                collection.allowSceneObjects = true;
+                collection.objectType = typeof(GameObject);
+                tempQuestNode.extensionContainer.Add(collection);
+                successCoditionFields.Add(collection);
+
+                var intField = new IntegerField("number");
+                tempQuestNode.extensionContainer.Add(intField);
+                successCoditionFields.Add(intField);
+                break;
+            case successCondition.TALK:
+                var partner = new ObjectField("partner");
+                partner.allowSceneObjects = true;
+                partner.objectType = typeof(GameObject);
+                tempQuestNode.extensionContainer.Add(partner);
+                successCoditionFields.Add(partner);
+
+                var dialogue = new ObjectField("dialogue");
+                dialogue.allowSceneObjects = true;
+                dialogue.objectType = typeof(DialogueContainer);
+                tempQuestNode.extensionContainer.Add(dialogue);
+                successCoditionFields.Add(dialogue);
+                break;
+            case successCondition.TIMELIMIT:
+                var timeLimitSec = new FloatField("limit Sec");
+                tempQuestNode.extensionContainer.Add(timeLimitSec);
+                successCoditionFields.Add(timeLimitSec);
+                break;
+        }
+    }
 
     public void AddChoicePort(QuestNode nodeCache, string overriddenPortName = "")
     {

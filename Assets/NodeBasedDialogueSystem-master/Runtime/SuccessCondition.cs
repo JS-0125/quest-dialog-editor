@@ -3,6 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum successCondition
+{
+    ARRIVED,
+    COLLECT,
+    TALK,
+    TIMELIMIT,
+}
 public abstract class SuccessCondition
 {
 

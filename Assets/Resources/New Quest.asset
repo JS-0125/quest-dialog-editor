@@ -22,9 +22,9 @@ MonoBehaviour:
   QuestNodeData:
   - NodeGUID: e4e00735-d72e-4c78-9db9-f61422c22abc
     QuestText: Node
-    Position: {x: 364, y: 203.2}
+    Position: {x: 286.4, y: 205.59999}
   - NodeGUID: f7f0967d-beff-40fb-a36c-09baa70312d7
     QuestText: Node
-    Position: {x: 616, y: 231.2}
+    Position: {x: 636, y: 211.2}
   ExposedProperties: []
   CommentBlockData: []
