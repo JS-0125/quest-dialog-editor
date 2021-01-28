@@ -30,21 +30,41 @@ namespace Subtegral.DialogueSystem.Editor
         
         public List<SearchTreeEntry> CreateSearchTree(SearchWindowContext context)
         {
-            var tree = new List<SearchTreeEntry>
-            {
-                new SearchTreeGroupEntry(new GUIContent("Create Node"), 0),
-                new SearchTreeGroupEntry(new GUIContent("Node"), 1),
-                new SearchTreeEntry(new GUIContent("Node", _indentationIcon))
-                {
-                    level = 2, userData = new DialogueNode()
-                },
-                new SearchTreeEntry(new GUIContent("Comment Block",_indentationIcon))
-                {
-                    level = 1,
-                    userData = new Group()
-                }
-            };
+            List<SearchTreeEntry> tree;
 
+            if (typeof(V) == typeof(QuestGraphView))
+            {
+                tree = new List<SearchTreeEntry>{
+                    new SearchTreeGroupEntry(new GUIContent("Create Node"), 0),
+                    new SearchTreeGroupEntry(new GUIContent("Node"), 1),
+                    new SearchTreeEntry(new GUIContent("Node", _indentationIcon))
+                    {
+                        level = 2, userData = new QuestNode()
+                    },
+                    new SearchTreeEntry(new GUIContent("Comment Block",_indentationIcon))
+                    {
+                       level = 1,
+                       userData = new Group()
+                    }
+                };
+            }
+            else
+            {
+                tree = new List<SearchTreeEntry>{
+                    new SearchTreeGroupEntry(new GUIContent("Create Node"), 0),
+                    new SearchTreeGroupEntry(new GUIContent("Node"), 1),
+                    new SearchTreeEntry(new GUIContent("Node", _indentationIcon))
+                    {
+                        level = 2, userData = new DialogueNode()
+                    },
+                    new SearchTreeEntry(new GUIContent("Comment Block",_indentationIcon))
+                    {
+                       level = 1,
+                       userData = new Group()
+                    }
+                };
+            }
+               
             return tree;
         }
 

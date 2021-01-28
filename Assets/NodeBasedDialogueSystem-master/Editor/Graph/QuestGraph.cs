@@ -70,7 +70,7 @@ public class QuestGraph : EditorWindow  // 이 클래스에서 파생하여 편집기 창을 만
         if (!string.IsNullOrEmpty(_fileName))
         {
             
-            var saveUtility = GraphSaveUtility.GetInstance(_graphView);
+            var saveUtility = QuestGraphSaveUtility.GetInstance(_graphView);
             if (save)
                 saveUtility.SaveGraph(_fileName);
             else

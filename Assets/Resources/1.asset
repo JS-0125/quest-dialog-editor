@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 98bc2de57a079b94b85709dbda8a4aee, type: 3}
-  m_Name: New Quest
+  m_Name: 1
   m_EditorClassIdentifier: 
   NodeLinks:
   - BaseNodeGUID: 13e295d1-7829-40ca-af1d-e9eb7ae150fd
@@ -19,16 +19,16 @@ MonoBehaviour:
   - BaseNodeGUID: e4e00735-d72e-4c78-9db9-f61422c22abc
     PortName: Option 0
     TargetNodeGUID: f7f0967d-beff-40fb-a36c-09baa70312d7
-  - BaseNodeGUID: f7f0967d-beff-40fb-a36c-09baa70312d7
-    PortName: Option 0
-    TargetNodeGUID: ed77f720-6c15-4d59-85d6-ab6ab8721797
   - BaseNodeGUID: ed77f720-6c15-4d59-85d6-ab6ab8721797
     PortName: Option 0
     TargetNodeGUID: bd72c3cc-a0dc-4c07-a01d-208918ea3433
+  - BaseNodeGUID: f7f0967d-beff-40fb-a36c-09baa70312d7
+    PortName: Option 0
+    TargetNodeGUID: ed77f720-6c15-4d59-85d6-ab6ab8721797
   QuestNodeData:
   - NodeGUID: e4e00735-d72e-4c78-9db9-f61422c22abc
     QuestText: arrived
-    QeustGiver: {fileID: 3663077797559668, guid: 2fef10c3a4549dd49972f1e4335cd833, type: 3}
+    QeustGiver: {fileID: 0}
     successConditionEnum: 0
     successCondition:
       destination: {fileID: 0}
@@ -38,21 +38,21 @@ MonoBehaviour:
       dialogue: {fileID: 0}
       limitSec: 0
     Position: {x: 286.4, y: 205.59999}
-  - NodeGUID: f7f0967d-beff-40fb-a36c-09baa70312d7
-    QuestText: collect
-    QeustGiver: {fileID: 0}
-    successConditionEnum: 1
+  - NodeGUID: ed77f720-6c15-4d59-85d6-ab6ab8721797
+    QuestText: success
+    QeustGiver: {fileID: 3102500559854669764, guid: f77c89383fd59cd47a1921c9684d4122, type: 3}
+    successConditionEnum: 2
     successCondition:
       destination: {fileID: 0}
-      collection: {fileID: 3663077797559668, guid: 2fef10c3a4549dd49972f1e4335cd833, type: 3}
-      number: 400
+      collection: {fileID: 0}
+      number: 0
       obj: {fileID: 0}
       dialogue: {fileID: 0}
       limitSec: 0
-    Position: {x: 636, y: 204.8}
+    Position: {x: 1013.6, y: 203.2}
   - NodeGUID: bd72c3cc-a0dc-4c07-a01d-208918ea3433
     QuestText: timeLimit
-    QeustGiver: {fileID: 0}
+    QeustGiver: {fileID: 3663077797559668, guid: 2fef10c3a4549dd49972f1e4335cd833, type: 3}
     successConditionEnum: 3
     successCondition:
       destination: {fileID: 0}
@@ -60,19 +60,19 @@ MonoBehaviour:
       number: 0
       obj: {fileID: 0}
       dialogue: {fileID: 0}
-      limitSec: 50
+      limitSec: 0
     Position: {x: 1459.2, y: 206.4}
-  - NodeGUID: ed77f720-6c15-4d59-85d6-ab6ab8721797
-    QuestText: success
+  - NodeGUID: f7f0967d-beff-40fb-a36c-09baa70312d7
+    QuestText: collect
     QeustGiver: {fileID: 0}
-    successConditionEnum: 2
+    successConditionEnum: 1
     successCondition:
       destination: {fileID: 0}
       collection: {fileID: 0}
       number: 0
       obj: {fileID: 0}
-      dialogue: {fileID: 11400000, guid: 04ee0886197c8d04cafc46a368103f2f, type: 2}
+      dialogue: {fileID: 0}
       limitSec: 0
-    Position: {x: 1013.6, y: 203.2}
+    Position: {x: 636, y: 204.8}
   ExposedProperties: []
   CommentBlockData: []

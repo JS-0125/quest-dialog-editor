@@ -15,7 +15,8 @@ using Button = UnityEngine.UIElements.Button;
 public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualElement
 {
     private NodeSearchWindow<QuestGraphView, QuestGraph> _searchWindow;
-    
+
+
     public QuestGraphView(QuestGraph editorWindow)
     {
         styleSheets.Add(Resources.Load<StyleSheet>("NarrativeGraph"));
@@ -88,15 +89,20 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
         var objectField = new ObjectField("Quest Giver");
         objectField.allowSceneObjects = true;
         objectField.objectType = typeof(GameObject);
+        objectField.RegisterValueChangedCallback(evt =>
+        {
+            tempQuestNode.questGiver = (GameObject)evt.newValue;
+        });
         tempQuestNode.mainContainer.Add(objectField);
 
 
         var enumField = new EnumField("Success Condition", successCondition.ARRIVED);
         enumField.RegisterValueChangedCallback(evt =>
         {
-            SuccessCondition(enumField.value, tempQuestNode);
+            SuccessCondition((successCondition)evt.newValue, tempQuestNode);
         });
-        tempQuestNode.extensionContainer.Add(enumField);    
+        tempQuestNode.extensionContainer.Add(enumField);
+        tempQuestNode.RefreshExpandedState();
 
         var textField = new TextField("");
         textField.RegisterValueChangedCallback(evt =>
@@ -117,14 +123,88 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
         return tempQuestNode;
     }
 
-    private List<VisualElement> successCoditionFields = new List<VisualElement>();
-
-    private void SuccessCondition(Enum condition, QuestNode tempQuestNode)
+    // load할 때 사용
+    public QuestNode CreateNode(QuestNodeData nodeData, Vector2 position)
     {
-        for (int i = 0; i < successCoditionFields.Count(); ++i)
-            tempQuestNode.extensionContainer.Remove(successCoditionFields[i]);
+        var tempQuestNode = new QuestNode()
+        {
+            title = nodeData.QuestText,
+            questText = nodeData.QuestText,
+            guid = nodeData.NodeGUID,
+            questGiver = nodeData.QeustGiver,
+            successCondition = nodeData.successCondition,
+            successConditionEnum = nodeData.successConditionEnum
+        };
 
-        successCoditionFields.Clear();
+        tempQuestNode.styleSheets.Add(Resources.Load<StyleSheet>("Node"));
+
+
+        // input 포트 생성
+        var inputPort = GetPortInstance(tempQuestNode, Direction.Input, Port.Capacity.Multi);
+        inputPort.portName = "Input";
+        tempQuestNode.inputContainer.Add(inputPort);
+
+        tempQuestNode.RefreshExpandedState();
+        tempQuestNode.RefreshPorts();
+        tempQuestNode.SetPosition(new Rect(position,
+            DefaultNodeSize)); //To-Do: implement screen center instantiation positioning
+
+        // 오브젝트 필드
+        // Quest giver 받는 필드
+        var objectField = new ObjectField("Quest Giver");
+        objectField.allowSceneObjects = true;
+        objectField.objectType = typeof(GameObject);
+        objectField.RegisterValueChangedCallback(evt =>
+        {
+            tempQuestNode.questGiver = (GameObject)evt.newValue;
+        });
+        objectField.SetValueWithoutNotify(tempQuestNode.questGiver);
+
+        tempQuestNode.mainContainer.Add(objectField);
+
+
+        var enumField = new EnumField("Success Condition", successCondition.ARRIVED);
+        enumField.RegisterValueChangedCallback(evt =>
+        {
+            SuccessCondition((successCondition)evt.newValue, tempQuestNode);
+        });
+        enumField.SetValueWithoutNotify(tempQuestNode.successConditionEnum);
+        tempQuestNode.extensionContainer.Add(enumField);
+        tempQuestNode.RefreshExpandedState();
+
+
+        var textField = new TextField("");
+        textField.RegisterValueChangedCallback(evt =>
+        {
+            tempQuestNode.questText = evt.newValue;
+            tempQuestNode.title = evt.newValue;
+        });
+        textField.SetValueWithoutNotify(tempQuestNode.title);
+        tempQuestNode.mainContainer.Add(textField);
+
+
+        var button = new Button(() => { AddChoicePort(tempQuestNode); })
+        {
+            text = "Add Choice"
+        };
+        tempQuestNode.titleButtonContainer.Add(button);
+
+        return tempQuestNode;
+    }
+
+    public void SuccessCondition(successCondition condition, QuestNode tempQuestNode)
+    {
+        // enum 설정
+        tempQuestNode.successConditionEnum = (successCondition)condition;
+
+        SuccessConditionObj successConditionObj = new SuccessConditionObj();
+
+        // 만약 전에 있었던 field가 있다면 컨테이너에서 삭제
+        for (int i = 1; i < tempQuestNode.extensionContainer.childCount; ++i)
+        {
+            tempQuestNode.extensionContainer.RemoveAt(i);
+            --i;
+        }
 
         switch (condition)
         {
@@ -132,39 +212,70 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
                 var destination = new ObjectField("Destination");
                 destination.allowSceneObjects = true;
                 destination.objectType = typeof(Collider);
+                destination.RegisterValueChangedCallback(evt =>
+                {
+                    successConditionObj.destination = (Collider)evt.newValue;
+                    tempQuestNode.successCondition = successConditionObj;
+                });
+                destination.SetValueWithoutNotify(tempQuestNode.successCondition?.destination ?? null);
                 tempQuestNode.extensionContainer.Add(destination);
-                successCoditionFields.Add(destination);
                 break;
             case successCondition.COLLECT:
                 var collection = new ObjectField("Collection");
                 collection.allowSceneObjects = true;
                 collection.objectType = typeof(GameObject);
+                collection.RegisterValueChangedCallback(evt =>
+                {
+                    successConditionObj.collection = (GameObject)evt.newValue;
+                    tempQuestNode.successCondition = successConditionObj;
+                });
+                collection.SetValueWithoutNotify(tempQuestNode.successCondition?.collection ?? null);
                 tempQuestNode.extensionContainer.Add(collection);
-                successCoditionFields.Add(collection);
 
                 var intField = new IntegerField("number");
+                intField.RegisterValueChangedCallback(evt =>
+                {
+                    successConditionObj.number = evt.newValue;
+                    tempQuestNode.successCondition = successConditionObj;
+                });
+                intField.SetValueWithoutNotify(tempQuestNode.successCondition?.number ?? 0);
                 tempQuestNode.extensionContainer.Add(intField);
-                successCoditionFields.Add(intField);
                 break;
             case successCondition.TALK:
                 var partner = new ObjectField("partner");
                 partner.allowSceneObjects = true;
                 partner.objectType = typeof(GameObject);
+                partner.RegisterValueChangedCallback(evt =>
+                {
+                    successConditionObj.obj = (GameObject)evt.newValue;
+                    tempQuestNode.successCondition = successConditionObj;
+                });
+                partner.SetValueWithoutNotify(tempQuestNode.successCondition?.obj ?? null);
                 tempQuestNode.extensionContainer.Add(partner);
-                successCoditionFields.Add(partner);
 
                 var dialogue = new ObjectField("dialogue");
                 dialogue.allowSceneObjects = true;
                 dialogue.objectType = typeof(DialogueContainer);
+                dialogue.RegisterValueChangedCallback(evt =>
+                {
+                    successConditionObj.dialogue = (DialogueContainer)evt.newValue;
+                    tempQuestNode.successCondition = successConditionObj;
+                });
+                dialogue.SetValueWithoutNotify(tempQuestNode.successCondition?.dialogue ?? null);
                 tempQuestNode.extensionContainer.Add(dialogue);
-                successCoditionFields.Add(dialogue);
                 break;
             case successCondition.TIMELIMIT:
                 var timeLimitSec = new FloatField("limit Sec");
+                timeLimitSec.RegisterValueChangedCallback(evt =>
+                {
+                    successConditionObj.limitSec = evt.newValue;
+                    tempQuestNode.successCondition = successConditionObj;
+                });
+                timeLimitSec.SetValueWithoutNotify(tempQuestNode.successCondition?.limitSec ?? 0);
                 tempQuestNode.extensionContainer.Add(timeLimitSec);
-                successCoditionFields.Add(timeLimitSec);
                 break;
         }
+        tempQuestNode.RefreshExpandedState();
     }
 
     public void AddChoicePort(QuestNode nodeCache, string overriddenPortName = "")
