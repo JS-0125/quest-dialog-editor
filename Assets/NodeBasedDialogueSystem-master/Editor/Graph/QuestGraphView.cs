@@ -267,7 +267,7 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
             case successCondition.TIMELIMIT:
                 var timeLimitSec = new FloatField("limit Sec");
                 timeLimitSec.RegisterValueChangedCallback(evt =>
-                {
+                {   
                     successConditionObj.limitSec = evt.newValue;
                     tempQuestNode.successCondition = successConditionObj;
                 });
