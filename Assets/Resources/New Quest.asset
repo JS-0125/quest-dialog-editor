@@ -13,22 +13,151 @@ MonoBehaviour:
   m_Name: New Quest
   m_EditorClassIdentifier: 
   NodeLinks:
-  - BaseNodeGUID: 13e295d1-7829-40ca-af1d-e9eb7ae150fd
+  - BaseNodeGUID: c7031c26-5eb4-4506-aab3-e16011da3a86
     PortName: Next
-    TargetNodeGUID: e4e00735-d72e-4c78-9db9-f61422c22abc
-  - BaseNodeGUID: e4e00735-d72e-4c78-9db9-f61422c22abc
+    TargetNodeGUID: 4bbd6700-e49f-4405-bda2-3b726599abc8
+  - BaseNodeGUID: 4bbd6700-e49f-4405-bda2-3b726599abc8
     PortName: Option 0
-    TargetNodeGUID: f7f0967d-beff-40fb-a36c-09baa70312d7
-  - BaseNodeGUID: f7f0967d-beff-40fb-a36c-09baa70312d7
+    TargetNodeGUID: 80ceb647-ff55-493a-874e-0e0b85532a67
+  - BaseNodeGUID: 80ceb647-ff55-493a-874e-0e0b85532a67
     PortName: Option 0
-    TargetNodeGUID: ed77f720-6c15-4d59-85d6-ab6ab8721797
-  - BaseNodeGUID: ed77f720-6c15-4d59-85d6-ab6ab8721797
+    TargetNodeGUID: 81f261a6-0317-4676-a469-d43844bebbf5
+  - BaseNodeGUID: 81f261a6-0317-4676-a469-d43844bebbf5
     PortName: Option 0
-    TargetNodeGUID: bd72c3cc-a0dc-4c07-a01d-208918ea3433
+    TargetNodeGUID: bb6af474-140b-410d-905a-009508f70991
+  - BaseNodeGUID: bb6af474-140b-410d-905a-009508f70991
+    PortName: Option 0
+    TargetNodeGUID: fe42643c-186b-4b62-9324-3abe970365d3
+  - BaseNodeGUID: fe42643c-186b-4b62-9324-3abe970365d3
+    PortName: Option 0
+    TargetNodeGUID: de06c8ab-4865-4c57-9610-aaad07790147
+  - BaseNodeGUID: de06c8ab-4865-4c57-9610-aaad07790147
+    PortName: Option 0
+    TargetNodeGUID: 66c6058a-8702-4594-bd5e-17f92fc23bd7
+  - BaseNodeGUID: 66c6058a-8702-4594-bd5e-17f92fc23bd7
+    PortName: Option 0
+    TargetNodeGUID: dd27f79c-534e-4a86-b545-fd008e3d9898
+  - BaseNodeGUID: dd27f79c-534e-4a86-b545-fd008e3d9898
+    PortName: Option 0
+    TargetNodeGUID: f1722b9f-5ae3-465b-a92b-0666486f7b8b
+  - BaseNodeGUID: f1722b9f-5ae3-465b-a92b-0666486f7b8b
+    PortName: Option 0
+    TargetNodeGUID: 688384dd-21fa-4a48-bb55-1fe841a96b2e
+  - BaseNodeGUID: 688384dd-21fa-4a48-bb55-1fe841a96b2e
+    PortName: Option 0
+    TargetNodeGUID: aced0c24-6898-4d75-ba9b-9282b19fd76d
   QuestNodeData:
-  - NodeGUID: e4e00735-d72e-4c78-9db9-f61422c22abc
-    QuestText: arrived
-    QeustGiver: {fileID: 3663077797559668, guid: 2fef10c3a4549dd49972f1e4335cd833, type: 3}
+  - NodeGUID: 4bbd6700-e49f-4405-bda2-3b726599abc8
+    QuestText: Node
+    QeustGiver: {fileID: 0}
+    successConditionEnum: 1
+    successCondition:
+      destination: {fileID: 0}
+      collection: {fileID: 0}
+      number: 0
+      obj: {fileID: 0}
+      dialogue: {fileID: 0}
+      limitSec: 0
+    Position: {x: 345.6, y: 125.59999}
+  - NodeGUID: 80ceb647-ff55-493a-874e-0e0b85532a67
+    QuestText: Node
+    QeustGiver: {fileID: 0}
+    successConditionEnum: 2
+    successCondition:
+      destination: {fileID: 0}
+      collection: {fileID: 0}
+      number: 20
+      obj: {fileID: 0}
+      dialogue: {fileID: 0}
+      limitSec: 0
+    Position: {x: 682.4, y: 123.2}
+  - NodeGUID: 81f261a6-0317-4676-a469-d43844bebbf5
+    QuestText: Node
+    QeustGiver: {fileID: 0}
+    successConditionEnum: 4
+    successCondition:
+      destination: {fileID: 0}
+      collection: {fileID: 0}
+      number: 0
+      obj: {fileID: 0}
+      dialogue: {fileID: 11400000, guid: 04ee0886197c8d04cafc46a368103f2f, type: 2}
+      limitSec: 0
+    Position: {x: 1017.6, y: 124}
+  - NodeGUID: bb6af474-140b-410d-905a-009508f70991
+    QuestText: Node
+    QeustGiver: {fileID: 0}
+    successConditionEnum: 8
+    successCondition:
+      destination: {fileID: 0}
+      collection: {fileID: 0}
+      number: 0
+      obj: {fileID: 0}
+      dialogue: {fileID: 0}
+      limitSec: 100
+    Position: {x: 1426.4, y: 126.399994}
+  - NodeGUID: fe42643c-186b-4b62-9324-3abe970365d3
+    QuestText: Node
+    QeustGiver: {fileID: 0}
+    successConditionEnum: 3
+    successCondition:
+      destination: {fileID: 0}
+      collection: {fileID: 0}
+      number: 10
+      obj: {fileID: 0}
+      dialogue: {fileID: 0}
+      limitSec: 0
+    Position: {x: 1711.2, y: 128}
+  - NodeGUID: de06c8ab-4865-4c57-9610-aaad07790147
+    QuestText: Node
+    QeustGiver: {fileID: 0}
+    successConditionEnum: 14
+    successCondition:
+      destination: {fileID: 0}
+      collection: {fileID: 0}
+      number: 50
+      obj: {fileID: 0}
+      dialogue: {fileID: 11400000, guid: 04ee0886197c8d04cafc46a368103f2f, type: 2}
+      limitSec: 8
+    Position: {x: 2111.2, y: 132.8}
+  - NodeGUID: 66c6058a-8702-4594-bd5e-17f92fc23bd7
+    QuestText: Node
+    QeustGiver: {fileID: 0}
+    successConditionEnum: -1
+    successCondition:
+      destination: {fileID: 0}
+      collection: {fileID: 0}
+      number: 79
+      obj: {fileID: 0}
+      dialogue: {fileID: 11400000, guid: 04ee0886197c8d04cafc46a368103f2f, type: 2}
+      limitSec: 7
+    Position: {x: 2546.4, y: 157.59999}
+  - NodeGUID: dd27f79c-534e-4a86-b545-fd008e3d9898
+    QuestText: Node
+    QeustGiver: {fileID: 0}
+    successConditionEnum: 1
+    successCondition:
+      destination: {fileID: 0}
+      collection: {fileID: 0}
+      number: 0
+      obj: {fileID: 0}
+      dialogue: {fileID: 0}
+      limitSec: 0
+    Position: {x: 2999.2, y: 223.2}
+  - NodeGUID: f1722b9f-5ae3-465b-a92b-0666486f7b8b
+    QuestText: Node
+    QeustGiver: {fileID: 0}
+    successConditionEnum: 2
+    successCondition:
+      destination: {fileID: 0}
+      collection: {fileID: 0}
+      number: 50
+      obj: {fileID: 0}
+      dialogue: {fileID: 0}
+      limitSec: 0
+    Position: {x: 3326.4, y: 232}
+  - NodeGUID: 688384dd-21fa-4a48-bb55-1fe841a96b2e
+    QuestText: Node
+    QeustGiver: {fileID: 0}
     successConditionEnum: 0
     successCondition:
       destination: {fileID: 0}
@@ -37,42 +166,18 @@ MonoBehaviour:
       obj: {fileID: 0}
       dialogue: {fileID: 0}
       limitSec: 0
-    Position: {x: 286.4, y: 205.59999}
-  - NodeGUID: f7f0967d-beff-40fb-a36c-09baa70312d7
-    QuestText: collect
+    Position: {x: 3671.2, y: 248.8}
+  - NodeGUID: aced0c24-6898-4d75-ba9b-9282b19fd76d
+    QuestText: Node
     QeustGiver: {fileID: 0}
-    successConditionEnum: 1
-    successCondition:
-      destination: {fileID: 0}
-      collection: {fileID: 3663077797559668, guid: 2fef10c3a4549dd49972f1e4335cd833, type: 3}
-      number: 400
-      obj: {fileID: 0}
-      dialogue: {fileID: 0}
-      limitSec: 0
-    Position: {x: 636, y: 204.8}
-  - NodeGUID: bd72c3cc-a0dc-4c07-a01d-208918ea3433
-    QuestText: timeLimit
-    QeustGiver: {fileID: 0}
-    successConditionEnum: 3
+    successConditionEnum: 6
     successCondition:
       destination: {fileID: 0}
       collection: {fileID: 0}
-      number: 0
-      obj: {fileID: 0}
-      dialogue: {fileID: 0}
-      limitSec: 50
-    Position: {x: 1459.2, y: 206.4}
-  - NodeGUID: ed77f720-6c15-4d59-85d6-ab6ab8721797
-    QuestText: success
-    QeustGiver: {fileID: 0}
-    successConditionEnum: 2
-    successCondition:
-      destination: {fileID: 0}
-      collection: {fileID: 0}
-      number: 0
+      number: 50
       obj: {fileID: 0}
       dialogue: {fileID: 11400000, guid: 04ee0886197c8d04cafc46a368103f2f, type: 2}
       limitSec: 0
-    Position: {x: 1013.6, y: 203.2}
+    Position: {x: 4008, y: 254.40001}
   ExposedProperties: []
   CommentBlockData: []

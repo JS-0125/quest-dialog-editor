@@ -180,9 +180,10 @@ namespace Subtegral.DialogueSystem.Editor
             foreach (var perNode in _questContainer.QuestNodeData)
             {
                 var tempNode = _graphView.CreateNode(perNode, Vector2.zero);
-                _graphView.SuccessCondition(tempNode.successConditionEnum, tempNode);
-                _graphView.AddElement(tempNode);
-               
+
+                 _graphView.SuccessCondition(tempNode.successConditionEnum, tempNode);
+                 _graphView.AddElement(tempNode);
+
                 var nodePorts = _questContainer.NodeLinks.Where(x => x.BaseNodeGUID == perNode.NodeGUID).ToList();
                 nodePorts.ForEach(x => _graphView.AddChoicePort(tempNode, x.PortName));
             }

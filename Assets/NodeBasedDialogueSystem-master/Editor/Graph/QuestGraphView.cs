@@ -69,7 +69,8 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
         {
             title = nodeName,
             questText = nodeName,
-            guid = Guid.NewGuid().ToString()
+            guid = Guid.NewGuid().ToString(),
+            successCondition = new SuccessConditionObj()
         };
         tempQuestNode.styleSheets.Add(Resources.Load<StyleSheet>("Node"));
 
@@ -95,14 +96,15 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
         });
         tempQuestNode.mainContainer.Add(objectField);
 
-
-        var enumField = new EnumField("Success Condition", successCondition.ARRIVED);
+        var enumField = new EnumFlagsField("Success Condition", successCondition.ARRIVED);
         enumField.RegisterValueChangedCallback(evt =>
         {
             SuccessCondition((successCondition)evt.newValue, tempQuestNode);
         });
+        enumField.SetValueWithoutNotify(successCondition.None);
         tempQuestNode.extensionContainer.Add(enumField);
         tempQuestNode.RefreshExpandedState();
+
 
         var textField = new TextField("");
         textField.RegisterValueChangedCallback(evt =>
@@ -162,14 +164,14 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
 
         tempQuestNode.mainContainer.Add(objectField);
 
-
-        var enumField = new EnumField("Success Condition", successCondition.ARRIVED);
+        var enumField = new EnumFlagsField("Success Condition", successCondition.ARRIVED);
         enumField.RegisterValueChangedCallback(evt =>
         {
             SuccessCondition((successCondition)evt.newValue, tempQuestNode);
         });
         enumField.SetValueWithoutNotify(tempQuestNode.successConditionEnum);
         tempQuestNode.extensionContainer.Add(enumField);
+
         tempQuestNode.RefreshExpandedState();
 
 
@@ -206,74 +208,71 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
             --i;
         }
 
-        switch (condition)
+        if((condition & successCondition.ARRIVED) == successCondition.ARRIVED){
+            var destination = new ObjectField("Destination");
+            destination.allowSceneObjects = true;
+            destination.objectType = typeof(Collider);
+            destination.RegisterValueChangedCallback(evt =>
+            {
+                tempQuestNode.successCondition.destination = (Collider)evt.newValue;
+            });
+            destination.SetValueWithoutNotify(tempQuestNode.successCondition?.destination ?? null);
+            tempQuestNode.extensionContainer.Add(destination);
+        }
+
+        if ((condition & successCondition.COLLECT) == successCondition.COLLECT)
         {
-            case successCondition.ARRIVED:
-                var destination = new ObjectField("Destination");
-                destination.allowSceneObjects = true;
-                destination.objectType = typeof(Collider);
-                destination.RegisterValueChangedCallback(evt =>
-                {
-                    successConditionObj.destination = (Collider)evt.newValue;
-                    tempQuestNode.successCondition = successConditionObj;
-                });
-                destination.SetValueWithoutNotify(tempQuestNode.successCondition?.destination ?? null);
-                tempQuestNode.extensionContainer.Add(destination);
-                break;
-            case successCondition.COLLECT:
-                var collection = new ObjectField("Collection");
-                collection.allowSceneObjects = true;
-                collection.objectType = typeof(GameObject);
-                collection.RegisterValueChangedCallback(evt =>
-                {
-                    successConditionObj.collection = (GameObject)evt.newValue;
-                    tempQuestNode.successCondition = successConditionObj;
-                });
-                collection.SetValueWithoutNotify(tempQuestNode.successCondition?.collection ?? null);
-                tempQuestNode.extensionContainer.Add(collection);
+            var collection = new ObjectField("Collection");
+            collection.allowSceneObjects = true;
+            collection.objectType = typeof(GameObject);
+            collection.RegisterValueChangedCallback(evt =>
+            {
+                tempQuestNode.successCondition.collection = (GameObject)evt.newValue;
+            });
+            collection.SetValueWithoutNotify(tempQuestNode.successCondition?.collection ?? null);
+            tempQuestNode.extensionContainer.Add(collection);
 
-                var intField = new IntegerField("number");
-                intField.RegisterValueChangedCallback(evt =>
-                {
-                    successConditionObj.number = evt.newValue;
-                    tempQuestNode.successCondition = successConditionObj;
-                });
-                intField.SetValueWithoutNotify(tempQuestNode.successCondition?.number ?? 0);
-                tempQuestNode.extensionContainer.Add(intField);
-                break;
-            case successCondition.TALK:
-                var partner = new ObjectField("partner");
-                partner.allowSceneObjects = true;
-                partner.objectType = typeof(GameObject);
-                partner.RegisterValueChangedCallback(evt =>
-                {
-                    successConditionObj.obj = (GameObject)evt.newValue;
-                    tempQuestNode.successCondition = successConditionObj;
-                });
-                partner.SetValueWithoutNotify(tempQuestNode.successCondition?.obj ?? null);
-                tempQuestNode.extensionContainer.Add(partner);
+            var intField = new IntegerField("number");
+            intField.RegisterValueChangedCallback(evt =>
+            {
+                tempQuestNode.successCondition.number = evt.newValue;
+            });
+            intField.SetValueWithoutNotify(tempQuestNode.successCondition?.number ?? 0);
+            tempQuestNode.extensionContainer.Add(intField);
+        }
 
-                var dialogue = new ObjectField("dialogue");
-                dialogue.allowSceneObjects = true;
-                dialogue.objectType = typeof(DialogueContainer);
-                dialogue.RegisterValueChangedCallback(evt =>
-                {
-                    successConditionObj.dialogue = (DialogueContainer)evt.newValue;
-                    tempQuestNode.successCondition = successConditionObj;
-                });
-                dialogue.SetValueWithoutNotify(tempQuestNode.successCondition?.dialogue ?? null);
-                tempQuestNode.extensionContainer.Add(dialogue);
-                break;
-            case successCondition.TIMELIMIT:
-                var timeLimitSec = new FloatField("limit Sec");
-                timeLimitSec.RegisterValueChangedCallback(evt =>
-                {   
-                    successConditionObj.limitSec = evt.newValue;
-                    tempQuestNode.successCondition = successConditionObj;
-                });
-                timeLimitSec.SetValueWithoutNotify(tempQuestNode.successCondition?.limitSec ?? 0);
-                tempQuestNode.extensionContainer.Add(timeLimitSec);
-                break;
+        if ((condition & successCondition.TALK) == successCondition.TALK)
+        {
+            var partner = new ObjectField("partner");
+            partner.allowSceneObjects = true;
+            partner.objectType = typeof(GameObject);
+            partner.RegisterValueChangedCallback(evt =>
+            {
+                tempQuestNode.successCondition.obj = (GameObject)evt.newValue;
+            });
+            partner.SetValueWithoutNotify(tempQuestNode.successCondition?.obj ?? null);
+            tempQuestNode.extensionContainer.Add(partner);
+
+            var dialogue = new ObjectField("dialogue");
+            dialogue.allowSceneObjects = true;
+            dialogue.objectType = typeof(DialogueContainer);
+            dialogue.RegisterValueChangedCallback(evt =>
+            {
+                tempQuestNode.successCondition.dialogue = (DialogueContainer)evt.newValue;
+            });
+            dialogue.SetValueWithoutNotify(tempQuestNode.successCondition?.dialogue ?? null);
+            tempQuestNode.extensionContainer.Add(dialogue);
+        }
+
+        if ((condition & successCondition.TIMELIMIT) == successCondition.TIMELIMIT)
+        {
+            var timeLimitSec = new FloatField("limit Sec");
+            timeLimitSec.RegisterValueChangedCallback(evt =>
+            {
+                tempQuestNode.successCondition.limitSec = evt.newValue;
+            });
+            timeLimitSec.SetValueWithoutNotify(tempQuestNode.successCondition?.limitSec ?? 0);
+            tempQuestNode.extensionContainer.Add(timeLimitSec);
         }
         tempQuestNode.RefreshExpandedState();
     }

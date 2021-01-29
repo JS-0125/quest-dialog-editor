@@ -7,6 +7,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using Subtegral.DialogueSystem.DataContainers;
 
+public class QuestSuccessCheck
+{
+    public QuestNodeData quest;
+    public bool arrived = false;
+    public bool collected = false;
+    public bool talked = false;
+    public bool inTime = false;
+}
+
 namespace Subtegral.DialogueSystem.Runtime
 {
     public class QuestParser : MonoBehaviour
@@ -19,7 +28,7 @@ namespace Subtegral.DialogueSystem.Runtime
         [SerializeField] private Transform acceptTransform;
         [SerializeField] private Transform questContainer;
 
-
+        List<QuestSuccessCheck> AcceptedQuests = new List<QuestSuccessCheck>();
 
         private void Start()
         {
@@ -29,12 +38,14 @@ namespace Subtegral.DialogueSystem.Runtime
 
         private void ProceedToNarrative(string narrativeDataGUID)
         {
+            var currentQuest = quest.QuestNodeData.Find(x => x.NodeGUID == narrativeDataGUID);
+
             var text = quest.QuestNodeData.Find(x => x.NodeGUID == narrativeDataGUID).QuestText;
             var choices = quest.NodeLinks.Where(x => x.BaseNodeGUID == narrativeDataGUID);
             questText.text = text;
 
             var button = Instantiate(acceptPrefab, acceptTransform);
-            button.onClick.AddListener(() => ProcessAccept(text));
+            button.onClick.AddListener(() => ProcessAccept(currentQuest));
 
             //var buttons = buttonContainer.GetComponentsInChildren<Button>();
             //for (int i = 0; i < buttons.Length; i++)
@@ -70,10 +81,13 @@ namespace Subtegral.DialogueSystem.Runtime
             //}
         }
 
-        private void ProcessAccept(string text)
+        private void ProcessAccept(QuestNodeData currentQuest)
         {
             var questText = Instantiate(textPrefab, questContainer);
-            questText.text = text;
+            questText.text = currentQuest.QuestText;
+            QuestSuccessCheck tmpQSC = new QuestSuccessCheck() { quest = currentQuest };
+
+            AcceptedQuests.Add(tmpQSC);
             //foreach (var exposedProperty in quest.ExposedProperties)
             //{
             //    text = text.Replace($"[{exposedProperty.PropertyName}]", exposedProperty.PropertyValue);
@@ -81,6 +95,29 @@ namespace Subtegral.DialogueSystem.Runtime
             //return text;
         }
 
+        private void CheckArrived(bool arrived, string guid)
+        { 
+            // ¿©±â
+            //AcceptedQuests.Find(x=>x.quest.)
+        }
+
+        private void PrintQuest()
+        {
+            for(int i = 0; i < AcceptedQuests.Count(); ++i)
+            {
+                //switch (CurrentQuests[i].successConditionEnum)
+                //{
+                //    case successCondition.ARRIVED:
+                //        break;
+                //    case successCondition.COLLECT:
+                //        break;
+                //    case successCondition.TALK:
+                //        break;
+                //    case successCondition.TIMELIMIT:
+                //        break;
+                //}
+            }        
+        }
         private void EndDialogue()
         {
             questText.transform.parent.gameObject.SetActive(false);
