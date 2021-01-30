@@ -85,9 +85,22 @@ namespace Subtegral.DialogueSystem.Runtime
         {
             var questText = Instantiate(textPrefab, questContainer);
             questText.text = currentQuest.QuestText;
-            QuestSuccessCheck tmpQSC = new QuestSuccessCheck() { quest = currentQuest };
 
+            if ((currentQuest.successConditionEnum & successCondition.ARRIVED) == successCondition.ARRIVED)
+                currentQuest.successCondition.destination.SetActive(true);
+
+            if ((currentQuest.successConditionEnum & successCondition.COLLECT) == successCondition.COLLECT)
+                currentQuest.successCondition.collection.SetActive(true);
+
+            //if ((currentQuest.successConditionEnum & successCondition.TALK) == successCondition.TALK)
+            //    currentQuest.successCondition.destination.SetActive(true);
+
+            //if ((currentQuest.successConditionEnum & successCondition.TIMELIMIT) == successCondition.TIMELIMIT)
+            //    currentQuest.successCondition.destination.SetActive(true);
+
+            QuestSuccessCheck tmpQSC = new QuestSuccessCheck() { quest = currentQuest };
             AcceptedQuests.Add(tmpQSC);
+
             //foreach (var exposedProperty in quest.ExposedProperties)
             //{
             //    text = text.Replace($"[{exposedProperty.PropertyName}]", exposedProperty.PropertyValue);
@@ -95,12 +108,32 @@ namespace Subtegral.DialogueSystem.Runtime
             //return text;
         }
 
-        private void CheckArrived(bool arrived, string guid)
-        { 
-            // ¿©±â
-            //AcceptedQuests.Find(x=>x.quest.)
+        public void CheckArrived(string guid)
+        {
+            AcceptedQuests.Find(x => x.quest.NodeGUID == guid).arrived = true;
         }
 
+        public void CheckCollected(string guid)
+        {
+            if (AcceptedQuests.Find(x => x.quest.NodeGUID == guid) != null)
+                AcceptedQuests.Find(x => x.quest.NodeGUID == guid).collected = true;
+        }
+
+        public void CheckTalked(string guid)
+        {
+            AcceptedQuests.Find(x => x.quest.NodeGUID == guid).talked = true;
+        }
+
+
+        public void CheckTimeLimit(string guid)
+        {
+            AcceptedQuests.Find(x => x.quest.NodeGUID == guid).inTime = true;
+        }
+
+        private void CheckQuestSuccess()
+        {
+
+        }
         private void PrintQuest()
         {
             for(int i = 0; i < AcceptedQuests.Count(); ++i)

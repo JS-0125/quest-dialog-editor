@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Subtegral.DialogueSystem.DataContainers;
 using Subtegral.DialogueSystem.Editor;
+using Subtegral.DialogueSystem.Runtime;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Button = UnityEngine.UIElements.Button;
-
 
 public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualElement
 {
@@ -211,10 +211,13 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
         if((condition & successCondition.ARRIVED) == successCondition.ARRIVED){
             var destination = new ObjectField("Destination");
             destination.allowSceneObjects = true;
-            destination.objectType = typeof(Collider);
+            destination.objectType = typeof(GameObject);
             destination.RegisterValueChangedCallback(evt =>
             {
-                tempQuestNode.successCondition.destination = (Collider)evt.newValue;
+            tempQuestNode.successCondition.destination = (GameObject)evt.newValue;
+                if(tempQuestNode.successCondition.destination.GetComponent<Destination>() == null)
+                    tempQuestNode.successCondition.destination.AddComponent<Destination>();
+                tempQuestNode.successCondition.destination.GetComponent<Destination>().guid = tempQuestNode.guid;
             });
             destination.SetValueWithoutNotify(tempQuestNode.successCondition?.destination ?? null);
             tempQuestNode.extensionContainer.Add(destination);
@@ -228,6 +231,10 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
             collection.RegisterValueChangedCallback(evt =>
             {
                 tempQuestNode.successCondition.collection = (GameObject)evt.newValue;
+                if (tempQuestNode.successCondition.collection.GetComponent<Collection>() == null)
+                    tempQuestNode.successCondition.collection.AddComponent<Collection>();
+                tempQuestNode.successCondition.collection.GetComponent<Collection>().guid = tempQuestNode.guid;
+                tempQuestNode.successCondition.collection.GetComponent<Collection>().amount = tempQuestNode.successCondition?.number ?? 0;
             });
             collection.SetValueWithoutNotify(tempQuestNode.successCondition?.collection ?? null);
             tempQuestNode.extensionContainer.Add(collection);
@@ -236,6 +243,8 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
             intField.RegisterValueChangedCallback(evt =>
             {
                 tempQuestNode.successCondition.number = evt.newValue;
+                if(tempQuestNode.successCondition.collection.GetComponent<Collection>() != null)
+                    tempQuestNode.successCondition.collection.GetComponent<Collection>().amount = tempQuestNode.successCondition.number;
             });
             intField.SetValueWithoutNotify(tempQuestNode.successCondition?.number ?? 0);
             tempQuestNode.extensionContainer.Add(intField);

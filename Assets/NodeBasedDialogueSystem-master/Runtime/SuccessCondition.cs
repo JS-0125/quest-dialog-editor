@@ -1,4 +1,5 @@
 using Subtegral.DialogueSystem.DataContainers;
+using Subtegral.DialogueSystem.Runtime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ public enum successCondition
 [Serializable]
 public class SuccessConditionObj
 {
-    public Collider destination;
+    public GameObject destination;
     public GameObject collection;
     public int number;
     public GameObject obj;
