@@ -6,8 +6,6 @@ using UnityEngine;
 public class Collection : MonoBehaviour
 {
     public string guid;
-    public int amount;
-    private int count;
 
     private void Start()
     {
@@ -19,17 +17,14 @@ public class Collection : MonoBehaviour
         {
             if (Input.GetButtonDown("LeftClick"))
             {
-                ++count;
                 this.gameObject.SetActive(false);
 
                 Debug.Log("collect");
-                if (count == amount)
-                {
-                    Debug.Log("collect success");
-                    Camera camera = Camera.main;
-                    camera.GetComponent<QuestParser>().CheckCollected(guid);
-                }
-            }     
+
+                Camera camera = Camera.main;
+                camera.GetComponent<QuestParser>().CheckCollected(guid, this.gameObject);
+
+            }
         }
     }
 }

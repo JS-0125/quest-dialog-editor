@@ -13,21 +13,22 @@ MonoBehaviour:
   m_Name: New Quest
   m_EditorClassIdentifier: 
   NodeLinks:
-  - BaseNodeGUID: 01540b14-ac85-47d1-b70e-dc606f95633e
+  - BaseNodeGUID: 6876ce81-0644-4539-ae2f-df28515a44fc
     PortName: Next
-    TargetNodeGUID: b6b1e91a-f80a-47e5-9908-4cc5b86566ec
+    TargetNodeGUID: 9beabf2e-2386-4dd5-8e9c-1310fe4910de
   QuestNodeData:
-  - NodeGUID: b6b1e91a-f80a-47e5-9908-4cc5b86566ec
-    QuestText: quest
+  - NodeGUID: 9beabf2e-2386-4dd5-8e9c-1310fe4910de
+    QuestText: Node
     QeustGiver: {fileID: 0}
-    successConditionEnum: 3
+    successConditionEnum: 11
     successCondition:
       destination: {fileID: 0}
-      collection: {fileID: 0}
-      number: 3
+      collection:
+      - {fileID: 0}
+      - {fileID: 0}
       obj: {fileID: 0}
       dialogue: {fileID: 0}
-      limitSec: 0
-    Position: {x: 268.8, y: 198.4}
+      limitSec: 50
+    Position: {x: 230.4, y: 204.8}
   ExposedProperties: []
   CommentBlockData: []

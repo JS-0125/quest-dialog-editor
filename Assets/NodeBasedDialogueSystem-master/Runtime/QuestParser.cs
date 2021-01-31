@@ -13,7 +13,7 @@ public class QuestSuccessCheck
     public bool arrived = false;
     public bool collected = false;
     public bool talked = false;
-    public bool inTime = false;
+    public bool inTime = true;
 }
 
 namespace Subtegral.DialogueSystem.Runtime
@@ -27,6 +27,9 @@ namespace Subtegral.DialogueSystem.Runtime
         [SerializeField] private Button acceptPrefab;
         [SerializeField] private Transform acceptTransform;
         [SerializeField] private Transform questContainer;
+
+        [SerializeField] private TextMeshProUGUI timer;
+
 
         List<QuestSuccessCheck> AcceptedQuests = new List<QuestSuccessCheck>();
 
@@ -46,39 +49,6 @@ namespace Subtegral.DialogueSystem.Runtime
 
             var button = Instantiate(acceptPrefab, acceptTransform);
             button.onClick.AddListener(() => ProcessAccept(currentQuest));
-
-            //var buttons = buttonContainer.GetComponentsInChildren<Button>();
-            //for (int i = 0; i < buttons.Length; i++)
-            //{
-            //    Destroy(buttons[i].gameObject);
-            //}
-
-            // 대화가 끝날 때
-            //if (choices.Count() == 0)
-            //{
-            //    var choice = choices.ToList();
-            //    var button = Instantiate(nextPrefab, nextButtonTransform);
-            //    button.onClick.AddListener(() => EndDialogue());
-            //    return;
-            //}
-
-            //// chioce가 1개 == 다음 버튼
-            //if (choices.Count() == 1)
-            //{
-            //    var choice = choices.ToList();
-            //    var button = Instantiate(nextPrefab, nextButtonTransform);
-            //    button.GetComponentInChildren<Text>().text = ProcessProperties(choice[0].PortName);
-            //    button.onClick.AddListener(() => ProceedToNarrative(choice[0].TargetNodeGUID));
-            //    return;
-            //}
-
-            //// chioce가 2개 이상 == 선택지가 있을 때
-            //foreach (var choice in choices)
-            //{
-            //    var button = Instantiate(choicePrefab, buttonContainer);
-            //    button.GetComponentInChildren<Text>().text = ProcessProperties(choice.PortName);
-            //    button.onClick.AddListener(() => ProceedToNarrative(choice.TargetNodeGUID));
-            //}
         }
 
         private void ProcessAccept(QuestNodeData currentQuest)
@@ -86,20 +56,21 @@ namespace Subtegral.DialogueSystem.Runtime
             var questText = Instantiate(textPrefab, questContainer);
             questText.text = currentQuest.QuestText;
 
+            QuestSuccessCheck tmpQSC = new QuestSuccessCheck() { quest = currentQuest };
+            AcceptedQuests.Add(tmpQSC);
+
             if ((currentQuest.successConditionEnum & successCondition.ARRIVED) == successCondition.ARRIVED)
                 currentQuest.successCondition.destination.SetActive(true);
 
             if ((currentQuest.successConditionEnum & successCondition.COLLECT) == successCondition.COLLECT)
-                currentQuest.successCondition.collection.SetActive(true);
+            {
+                for (int i = 0; i < currentQuest.successCondition.collection.Count(); ++i)
+                    currentQuest.successCondition.collection[i].SetActive(true);
+            }
 
-            //if ((currentQuest.successConditionEnum & successCondition.TALK) == successCondition.TALK)
-            //    currentQuest.successCondition.destination.SetActive(true);
+            if ((currentQuest.successConditionEnum & successCondition.TIMELIMIT) == successCondition.TIMELIMIT)
+                StartCoroutine(Timer(currentQuest.successCondition.limitSec, currentQuest.NodeGUID));
 
-            //if ((currentQuest.successConditionEnum & successCondition.TIMELIMIT) == successCondition.TIMELIMIT)
-            //    currentQuest.successCondition.destination.SetActive(true);
-
-            QuestSuccessCheck tmpQSC = new QuestSuccessCheck() { quest = currentQuest };
-            AcceptedQuests.Add(tmpQSC);
 
             //foreach (var exposedProperty in quest.ExposedProperties)
             //{
@@ -110,50 +81,168 @@ namespace Subtegral.DialogueSystem.Runtime
 
         public void CheckArrived(string guid)
         {
-            AcceptedQuests.Find(x => x.quest.NodeGUID == guid).arrived = true;
+            var currentQuest = AcceptedQuests.Find(x => x.quest.NodeGUID == guid);
+
+            currentQuest.arrived = true;
+            if (CheckQuestSuccess(currentQuest))
+                Successed(currentQuest);
+
+            Debug.Log("arrived success");
         }
 
-        public void CheckCollected(string guid)
+        public void CheckCollected(string guid, GameObject collection)
         {
+            var currentQuest = AcceptedQuests.Find(x => x.quest.NodeGUID == guid);
+
+            currentQuest.quest.successCondition.collection.Find(x => x.gameObject == collection).SetActive(false);
+
+            UpdateCollectQuestText();
+
+            if (currentQuest.quest.successCondition.collection.All(x => x.activeSelf == false)) 
+            {
+                currentQuest.collected = true;
+                if (CheckQuestSuccess(currentQuest))
+                    Successed(currentQuest);
+
+                Debug.Log("collect success");
+            }
+        }
+
+        public void CheckTalkPartner(GameObject partner)
+        {
+            if (AcceptedQuests.Find(x => x.quest.successCondition.obj == partner) != null)
+            {
+                var currentQuest = AcceptedQuests.Find(x => x.quest.successCondition.obj == partner);
+
+                var dialogueParser = this.gameObject.GetComponent<DialogueParser>();
+                dialogueParser.dialogue = currentQuest.quest.successCondition.dialogue;
+                dialogueParser.StartTalk();
+
+                currentQuest.talked = true;
+                if (CheckQuestSuccess(currentQuest))
+                    Successed(currentQuest);
+
+                Debug.Log("talk success");
+            }
+        }
+
+        private IEnumerator Timer(float time, string guid)
+        {
+            Debug.Log("timer start");
+            timer.gameObject.SetActive(true);
+
+            while (time > 0)
+            {
+                if (AcceptedQuests.Find(x => x.quest.NodeGUID == guid) == null)
+                    break;
+                time -= 0.1f;
+                timer.text = time.ToString();
+                yield return new WaitForSeconds(0.1f);
+            }
+
             if (AcceptedQuests.Find(x => x.quest.NodeGUID == guid) != null)
-                AcceptedQuests.Find(x => x.quest.NodeGUID == guid).collected = true;
+                AcceptedQuests.Find(x => x.quest.NodeGUID == guid).inTime = false;
+
+            timer.gameObject.SetActive(false);
         }
 
-        public void CheckTalked(string guid)
+        private bool CheckQuestSuccess(QuestSuccessCheck check)
         {
-            AcceptedQuests.Find(x => x.quest.NodeGUID == guid).talked = true;
+            switch (check.quest.successConditionEnum)
+            {
+                case successCondition.ARRIVED:
+                    if (check.arrived)
+                        return true;
+                    break;
+                case successCondition.COLLECT:
+                    if (check.collected)
+                        return true;
+                    break;
+                case successCondition.TALK:
+                    if (check.talked)
+                        return true;
+                    break;
+                case successCondition.TIMELIMIT:
+                    if (check.inTime)
+                        return true;
+                    break;
+                case successCondition.ARRIVED | successCondition.COLLECT:
+                    if (check.arrived && check.collected)
+                        return true;
+                    break;
+                case successCondition.ARRIVED | successCondition.TALK:
+                    if (check.arrived && check.talked)
+                        return true;
+                    break;
+                case successCondition.ARRIVED | successCondition.TIMELIMIT:
+                    if (check.arrived && check.inTime)
+                        return true;
+                    break;
+                case successCondition.COLLECT | successCondition.TALK:
+                    if (check.collected && check.talked)
+                        return true;
+                    break;
+                case successCondition.COLLECT | successCondition.TIMELIMIT:
+                    if (check.collected && check.inTime)
+                        return true;
+                    break;
+                case successCondition.TALK | successCondition.TIMELIMIT:
+                    if (check.talked && check.inTime)
+                        return true;
+                    break;
+                case successCondition.ARRIVED | successCondition.COLLECT | successCondition.TALK:
+                    if (check.arrived && check.collected && check.talked)
+                        return true;
+                    break;
+                case successCondition.ARRIVED | successCondition.COLLECT | successCondition.TIMELIMIT:
+                    if (check.arrived && check.collected && check.inTime)
+                        return true;
+                    break;
+                case successCondition.ARRIVED | successCondition.TALK | successCondition.TIMELIMIT:
+                    if (check.arrived && check.talked && check.inTime)
+                        return true;
+                    break;
+                case successCondition.COLLECT | successCondition.TALK | successCondition.TIMELIMIT:
+                    if (check.collected && check.talked && check.inTime)
+                        return true;
+                    break;
+                case successCondition.All:
+                    if (check.arrived && check.collected && check.talked && check.inTime)
+                        return true;
+                    break;
+                case successCondition.None:
+                    return true;
+            }
+            return false;
         }
 
-
-        public void CheckTimeLimit(string guid)
+        private void Successed(QuestSuccessCheck successedQuest)
         {
-            AcceptedQuests.Find(x => x.quest.NodeGUID == guid).inTime = true;
+            Destroy(questContainer.GetChild(AcceptedQuests.IndexOf(successedQuest)).gameObject);
+            AcceptedQuests.Remove(successedQuest);
+            Debug.Log("퀘스트 완료!");
         }
 
-        private void CheckQuestSuccess()
-        {
-
-        }
-        private void PrintQuest()
+        private void UpdateCollectQuestText()
         {
             for(int i = 0; i < AcceptedQuests.Count(); ++i)
             {
-                //switch (CurrentQuests[i].successConditionEnum)
-                //{
-                //    case successCondition.ARRIVED:
-                //        break;
-                //    case successCondition.COLLECT:
-                //        break;
-                //    case successCondition.TALK:
-                //        break;
-                //    case successCondition.TIMELIMIT:
-                //        break;
-                //}
-            }        
-        }
-        private void EndDialogue()
-        {
-            questText.transform.parent.gameObject.SetActive(false);
+                var quest = AcceptedQuests[i].quest;
+                string tmpText = quest.QuestText;
+
+                if ((quest.successConditionEnum & successCondition.COLLECT) == successCondition.COLLECT)
+                {
+                    int count = 0;
+                    for (int j = 0; j < quest.successCondition.collection.Count(); ++j)
+                        if (quest.successCondition.collection[j].activeSelf == false)
+                            ++count;
+
+                    tmpText += " (" + count.ToString() + "/" + quest.successCondition.collection.Count().ToString() + ")";
+                }
+
+                var questText = questContainer.GetChild(i);
+                questText.GetComponent<TextMeshProUGUI>().text = tmpText;
+            }    
         }
     }
 }

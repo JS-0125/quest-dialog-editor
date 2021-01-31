@@ -225,29 +225,44 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
 
         if ((condition & successCondition.COLLECT) == successCondition.COLLECT)
         {
-            var collection = new ObjectField("Collection");
-            collection.allowSceneObjects = true;
-            collection.objectType = typeof(GameObject);
-            collection.RegisterValueChangedCallback(evt =>
-            {
-                tempQuestNode.successCondition.collection = (GameObject)evt.newValue;
-                if (tempQuestNode.successCondition.collection.GetComponent<Collection>() == null)
-                    tempQuestNode.successCondition.collection.AddComponent<Collection>();
-                tempQuestNode.successCondition.collection.GetComponent<Collection>().guid = tempQuestNode.guid;
-                tempQuestNode.successCondition.collection.GetComponent<Collection>().amount = tempQuestNode.successCondition?.number ?? 0;
-            });
-            collection.SetValueWithoutNotify(tempQuestNode.successCondition?.collection ?? null);
-            tempQuestNode.extensionContainer.Add(collection);
+            var button = new Button(() => {
+                var collection = new ObjectField("Collection");
+                collection.allowSceneObjects = true;
+                collection.objectType = typeof(GameObject);
+                collection.RegisterValueChangedCallback(evt =>
+                {
+                    tempQuestNode.successCondition.collection.Add((GameObject)evt.newValue);
+                    if (tempQuestNode.successCondition.collection.Last().GetComponent<Collection>() == null)
+                        tempQuestNode.successCondition.collection.Last().AddComponent<Collection>();
+                    tempQuestNode.successCondition.collection.Last().GetComponent<Collection>().guid = tempQuestNode.guid;
 
-            var intField = new IntegerField("number");
-            intField.RegisterValueChangedCallback(evt =>
+                });
+                tempQuestNode.extensionContainer.Add(collection);
+            })
             {
-                tempQuestNode.successCondition.number = evt.newValue;
-                if(tempQuestNode.successCondition.collection.GetComponent<Collection>() != null)
-                    tempQuestNode.successCondition.collection.GetComponent<Collection>().amount = tempQuestNode.successCondition.number;
-            });
-            intField.SetValueWithoutNotify(tempQuestNode.successCondition?.number ?? 0);
-            tempQuestNode.extensionContainer.Add(intField);
+                text = "Add Collection"
+            };
+            tempQuestNode.extensionContainer.Add(button);
+
+            if(tempQuestNode.successCondition.collection.Count() != 0)
+            {
+                for(int i =0;i< tempQuestNode.successCondition.collection.Count(); ++i)
+                {
+                    var collection = new ObjectField("Collection");
+                    collection.allowSceneObjects = true;
+                    collection.objectType = typeof(GameObject);
+                    collection.RegisterValueChangedCallback(evt =>
+                    {
+                        tempQuestNode.successCondition.collection.Add((GameObject)evt.newValue);
+                        if (tempQuestNode.successCondition.collection.Last().GetComponent<Collection>() == null)
+                            tempQuestNode.successCondition.collection.Last().AddComponent<Collection>();
+                        tempQuestNode.successCondition.collection.Last().GetComponent<Collection>().guid = tempQuestNode.guid;
+
+                    });
+                    collection.SetValueWithoutNotify(tempQuestNode.successCondition.collection[i]);
+                    tempQuestNode.extensionContainer.Add(collection);
+                }
+            }
         }
 
         if ((condition & successCondition.TALK) == successCondition.TALK)

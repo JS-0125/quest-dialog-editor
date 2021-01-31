@@ -17,7 +17,6 @@ namespace Subtegral.DialogueSystem.Runtime
         {
             if (other.tag == "Player")
             {
-                Debug.Log("arrived success");
                 Camera camera = Camera.main;
                 camera.GetComponent<QuestParser>().CheckArrived(guid);
             }

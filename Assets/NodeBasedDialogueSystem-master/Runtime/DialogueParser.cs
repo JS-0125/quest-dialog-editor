@@ -11,7 +11,7 @@ namespace Subtegral.DialogueSystem.Runtime
 {
     public class DialogueParser : MonoBehaviour
     {
-        [SerializeField] private DialogueContainer dialogue;
+        [SerializeField] public DialogueContainer dialogue;
         [SerializeField] private TextMeshProUGUI dialogueText;
         [SerializeField] private Button choicePrefab;
         [SerializeField] private Button nextPrefab;
@@ -19,7 +19,7 @@ namespace Subtegral.DialogueSystem.Runtime
         [SerializeField] private Transform nextButtonTransform;
 
 
-        private void Start()
+        public void StartTalk()
         {
             var narrativeData = dialogue.NodeLinks.First(); //Entrypoint node
             ProceedToNarrative(narrativeData.TargetNodeGUID);

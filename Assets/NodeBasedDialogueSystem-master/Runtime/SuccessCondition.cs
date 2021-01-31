@@ -21,8 +21,7 @@ public enum successCondition
 public class SuccessConditionObj
 {
     public GameObject destination;
-    public GameObject collection;
-    public int number;
+    public List<GameObject> collection = new List<GameObject>();
     public GameObject obj;
     public DialogueContainer dialogue;
     public float limitSec;
