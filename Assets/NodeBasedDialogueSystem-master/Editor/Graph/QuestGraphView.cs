@@ -214,10 +214,39 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
             destination.objectType = typeof(GameObject);
             destination.RegisterValueChangedCallback(evt =>
             {
-            tempQuestNode.successCondition.destination = (GameObject)evt.newValue;
-                if(tempQuestNode.successCondition.destination.GetComponent<Destination>() == null)
-                    tempQuestNode.successCondition.destination.AddComponent<Destination>();
-                tempQuestNode.successCondition.destination.GetComponent<Destination>().guid = tempQuestNode.guid;
+                if (tempQuestNode.successCondition.destination != null)
+                {
+                    var previousObject = tempQuestNode.successCondition.destination.gameObject;
+                    System.IO.File.Delete($"Assets/Resources/{previousObject.name}.prefab");
+                    System.IO.File.Delete($"Assets/Resources/{previousObject.name}.prefab.meta");
+
+                    var previousValue = GameObject.Find(previousObject.name);
+                    var collectionScript = previousValue.GetComponent<Destination>();
+                    UnityEngine.Object.DestroyImmediate(collectionScript);
+
+                    if (evt.newValue == null)
+                        return;
+
+                    var destinationObj = (GameObject)evt.newValue;
+
+                    destinationObj.AddComponent<Destination>();
+                    destinationObj.GetComponent<Destination>().guid = tempQuestNode.guid;
+
+                    var prefab = PrefabUtility.SaveAsPrefabAsset(destinationObj, $"Assets/Resources/{destinationObj.name}.prefab");
+                    tempQuestNode.successCondition.destination = prefab;
+                }
+                else
+                {
+                    if (evt.newValue == null)
+                        return;
+                    var destinationObj = (GameObject)evt.newValue;
+
+                    destinationObj.AddComponent<Destination>();
+                    destinationObj.GetComponent<Destination>().guid = tempQuestNode.guid;
+
+                    var prefab = PrefabUtility.SaveAsPrefabAsset(destinationObj, $"Assets/Resources/{destinationObj.name}.prefab");
+                    tempQuestNode.successCondition.destination = prefab;
+                }
             });
             destination.SetValueWithoutNotify(tempQuestNode.successCondition?.destination ?? null);
             tempQuestNode.extensionContainer.Add(destination);
@@ -229,13 +258,49 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
                 var collection = new ObjectField("Collection");
                 collection.allowSceneObjects = true;
                 collection.objectType = typeof(GameObject);
+                tempQuestNode.successCondition.collection.Add(null);
+
                 collection.RegisterValueChangedCallback(evt =>
                 {
-                    tempQuestNode.successCondition.collection.Add((GameObject)evt.newValue);
-                    if (tempQuestNode.successCondition.collection.Last().GetComponent<Collection>() == null)
-                        tempQuestNode.successCondition.collection.Last().AddComponent<Collection>();
-                    tempQuestNode.successCondition.collection.Last().GetComponent<Collection>().guid = tempQuestNode.guid;
+                    if (tempQuestNode.successCondition.collection.Find(x => x == (GameObject)evt.previousValue) != null)
+                    {
+                        var previousObject = tempQuestNode.successCondition.collection.Find(x => x.gameObject == (GameObject)evt.previousValue);
+                        int index = tempQuestNode.successCondition.collection.IndexOf(previousObject);
+                       
+                        var previousValue = GameObject.Find(previousObject.name);
+                        //var previousValue = collectionObjectCpntainer.transform.Find(previousObject.name);
 
+                        var collectionScript = previousValue.GetComponent<Collection>();
+                        UnityEngine.Object.DestroyImmediate(collectionScript);
+
+
+                        System.IO.File.Delete($"Assets/Resources/{previousObject.name}.prefab");
+                        System.IO.File.Delete($"Assets/Resources/{previousObject.name}.prefab.meta");
+
+                        if (evt.newValue == null)
+                            return;
+
+                        var collectObj = (GameObject)evt.newValue;
+
+                        collectObj.AddComponent<Collection>();
+                        collectObj.GetComponent<Collection>().guid = tempQuestNode.guid;
+
+                        var prefab = PrefabUtility.SaveAsPrefabAsset(collectObj, $"Assets/Resources/{collectObj.name}.prefab");
+                        tempQuestNode.successCondition.collection[index] = prefab;
+                    }
+                    else
+                    {
+                        if (evt.newValue == null)
+                            return;
+                        int index = tempQuestNode.successCondition.collection.IndexOf(tempQuestNode.successCondition.collection.Find(x => x == null));
+                        var collectObj = (GameObject)evt.newValue;
+
+                        collectObj.AddComponent<Collection>();
+                        collectObj.GetComponent<Collection>().guid = tempQuestNode.guid;
+
+                        var prefab = PrefabUtility.SaveAsPrefabAsset(collectObj, $"Assets/Resources/{collectObj.name}.prefab");
+                        tempQuestNode.successCondition.collection[index] = prefab;
+                    }
                 });
                 tempQuestNode.extensionContainer.Add(collection);
             })
@@ -253,10 +318,44 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
                     collection.objectType = typeof(GameObject);
                     collection.RegisterValueChangedCallback(evt =>
                     {
-                        tempQuestNode.successCondition.collection.Add((GameObject)evt.newValue);
-                        if (tempQuestNode.successCondition.collection.Last().GetComponent<Collection>() == null)
-                            tempQuestNode.successCondition.collection.Last().AddComponent<Collection>();
-                        tempQuestNode.successCondition.collection.Last().GetComponent<Collection>().guid = tempQuestNode.guid;
+                        if (tempQuestNode.successCondition.collection.Find(x => x == (GameObject)evt.previousValue) != null)
+                        {
+                            var previousObject = tempQuestNode.successCondition.collection.Find(x => x.name == evt.previousValue.name);
+                            int index = tempQuestNode.successCondition.collection.IndexOf(previousObject);
+
+                            var previousValue = GameObject.Find(previousObject.name);
+                            var collectionScript = previousValue.GetComponent<Collection>();
+
+                            UnityEngine.Object.DestroyImmediate(collectionScript);
+                            System.IO.File.Delete($"Assets/Resources/{previousObject.name}.prefab");
+                            System.IO.File.Delete($"Assets/Resources/{previousObject.name}.prefab.meta");
+
+
+                            if (evt.newValue == null)
+                                return;
+
+                            var collectObj = (GameObject)evt.newValue;
+
+                            collectObj.AddComponent<Collection>();
+                            collectObj.GetComponent<Collection>().guid = tempQuestNode.guid;
+
+                            var prefab = PrefabUtility.SaveAsPrefabAsset(collectObj, $"Assets/Resources/{collectObj.name}.prefab");
+                            tempQuestNode.successCondition.collection[index] = prefab;
+                        }
+                        else
+                        {
+                            if (evt.newValue == null)
+                                return;
+
+                            int index = tempQuestNode.successCondition.collection.IndexOf(tempQuestNode.successCondition.collection.Find(x => x == null));
+                            var collectObj = (GameObject)evt.newValue;
+
+                            collectObj.AddComponent<Collection>();
+                            collectObj.GetComponent<Collection>().guid = tempQuestNode.guid;
+
+                            var prefab = PrefabUtility.SaveAsPrefabAsset(collectObj, $"Assets/Resources/{collectObj.name}.prefab");
+                            tempQuestNode.successCondition.collection[index] = prefab;
+                        }
 
                     });
                     collection.SetValueWithoutNotify(tempQuestNode.successCondition.collection[i]);

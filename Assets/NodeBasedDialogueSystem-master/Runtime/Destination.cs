@@ -17,6 +17,7 @@ namespace Subtegral.DialogueSystem.Runtime
         {
             if (other.tag == "Player")
             {
+                this.gameObject.SetActive(false);
                 Camera camera = Camera.main;
                 camera.GetComponent<QuestParser>().CheckArrived(guid);
             }

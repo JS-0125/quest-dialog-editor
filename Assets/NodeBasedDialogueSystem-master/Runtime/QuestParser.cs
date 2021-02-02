@@ -30,6 +30,9 @@ namespace Subtegral.DialogueSystem.Runtime
 
         [SerializeField] private TextMeshProUGUI timer;
 
+        [SerializeField] private Transform collectObjectContainer;
+        [SerializeField] private Transform destinationContainer;
+
 
         List<QuestSuccessCheck> AcceptedQuests = new List<QuestSuccessCheck>();
 
@@ -37,6 +40,23 @@ namespace Subtegral.DialogueSystem.Runtime
         {
             var narrativeData = quest.NodeLinks.First(); //Entrypoint node
             ProceedToNarrative(narrativeData.TargetNodeGUID);
+
+            var notCollection = collectObjectContainer.GetComponentsInChildren<Transform>();
+            for (int i = 0; i < notCollection.Count(); ++i)
+                notCollection[i].parent = null;
+
+            var collections = GameObject.FindObjectsOfType<Collection>(true);
+            for (int i = 0; i < collections.Count(); ++i)
+                collections[i].transform.parent = collectObjectContainer;
+
+
+            var notDestination = destinationContainer.GetComponentsInChildren<Transform>();
+            for (int i = 0; i < notDestination.Count(); ++i)
+                notDestination[i].parent = null;
+
+            var destinations = GameObject.FindObjectsOfType<Destination>(true);
+            for (int i = 0; i < destinations.Count(); ++i)
+                destinations[i].transform.parent = destinationContainer;
         }
 
         private void ProceedToNarrative(string narrativeDataGUID)
@@ -60,12 +80,13 @@ namespace Subtegral.DialogueSystem.Runtime
             AcceptedQuests.Add(tmpQSC);
 
             if ((currentQuest.successConditionEnum & successCondition.ARRIVED) == successCondition.ARRIVED)
-                currentQuest.successCondition.destination.SetActive(true);
+                destinationContainer.Find(currentQuest.successCondition.destination.name).gameObject.SetActive(true);
 
             if ((currentQuest.successConditionEnum & successCondition.COLLECT) == successCondition.COLLECT)
             {
                 for (int i = 0; i < currentQuest.successCondition.collection.Count(); ++i)
-                    currentQuest.successCondition.collection[i].SetActive(true);
+                    collectObjectContainer.Find(currentQuest.successCondition.collection[i].name).gameObject.SetActive(true);
+                UpdateCollectQuestText();
             }
 
             if ((currentQuest.successConditionEnum & successCondition.TIMELIMIT) == successCondition.TIMELIMIT)
@@ -94,11 +115,10 @@ namespace Subtegral.DialogueSystem.Runtime
         {
             var currentQuest = AcceptedQuests.Find(x => x.quest.NodeGUID == guid);
 
-            currentQuest.quest.successCondition.collection.Find(x => x.gameObject == collection).SetActive(false);
-
             UpdateCollectQuestText();
+            Debug.Log(collectObjectContainer.GetComponentsInChildren<Transform>().GetLength(0));
 
-            if (currentQuest.quest.successCondition.collection.All(x => x.activeSelf == false)) 
+            if (collectObjectContainer.GetComponentsInChildren<Transform>().GetLength(0) == 1) 
             {
                 currentQuest.collected = true;
                 if (CheckQuestSuccess(currentQuest))
@@ -234,7 +254,7 @@ namespace Subtegral.DialogueSystem.Runtime
                 {
                     int count = 0;
                     for (int j = 0; j < quest.successCondition.collection.Count(); ++j)
-                        if (quest.successCondition.collection[j].activeSelf == false)
+                        if (collectObjectContainer.GetChild(j).gameObject.activeSelf == false)
                             ++count;
 
                     tmpText += " (" + count.ToString() + "/" + quest.successCondition.collection.Count().ToString() + ")";

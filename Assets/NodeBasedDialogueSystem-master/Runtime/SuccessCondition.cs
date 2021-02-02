@@ -20,9 +20,9 @@ public enum successCondition
 [Serializable]
 public class SuccessConditionObj
 {
-    public GameObject destination;
+    public GameObject destination = null;
     public List<GameObject> collection = new List<GameObject>();
-    public GameObject obj;
+    public GameObject obj = null;
     public DialogueContainer dialogue;
     public float limitSec;
 }

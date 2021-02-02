@@ -1,4 +1,5 @@
 using Subtegral.DialogueSystem.Runtime;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,7 @@ public class Collection : MonoBehaviour
     {
         this.gameObject.SetActive(false);
     }
+
     private void OnTriggerStay(Collider other)
     {
         if (other.tag == "Player")
@@ -23,7 +25,6 @@ public class Collection : MonoBehaviour
 
                 Camera camera = Camera.main;
                 camera.GetComponent<QuestParser>().CheckCollected(guid, this.gameObject);
-
             }
         }
     }
