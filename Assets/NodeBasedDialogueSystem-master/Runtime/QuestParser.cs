@@ -32,14 +32,18 @@ namespace Subtegral.DialogueSystem.Runtime
 
         [SerializeField] private Transform collectObjectContainer;
         [SerializeField] private Transform destinationContainer;
+        [SerializeField] private PlayerAction playerAction;
 
 
-        List<QuestSuccessCheck> AcceptedQuests = new List<QuestSuccessCheck>();
+        private List<QuestSuccessCheck> AcceptedQuests = new List<QuestSuccessCheck>();
+        private List<NodeLinkData> canAcceptQuest = new List<NodeLinkData>();
+        private DialogueParser dialogueParser;
 
         private void Start()
         {
-            var narrativeData = quest.NodeLinks.First(); //Entrypoint node
-            ProceedToNarrative(narrativeData.TargetNodeGUID);
+            dialogueParser = this.transform.GetComponent<DialogueParser>();
+            Debug.Log(quest.NodeLinks.First().PortName);
+            canAcceptQuest.Add(quest.NodeLinks.First());
 
             var notCollection = collectObjectContainer.GetComponentsInChildren<Transform>();
             for (int i = 0; i < notCollection.Count(); ++i)
@@ -59,45 +63,80 @@ namespace Subtegral.DialogueSystem.Runtime
                 destinations[i].transform.parent = destinationContainer;
         }
 
-        private void ProceedToNarrative(string narrativeDataGUID)
+        public bool IsQuestGiver(GameObject obj)
         {
+            Debug.Log("IsQuestGiver");
+
+            for(int i =0;i< canAcceptQuest.Count(); ++i)
+            {
+                Debug.Log("check canAcceptQuest");
+
+                var checkQuest = quest.QuestNodeData.Find(x => x.NodeGUID == canAcceptQuest[i].TargetNodeGUID);
+
+                if (checkQuest == null)
+                    continue;
+
+                if (checkQuest.QeustGiver == obj.name)
+                {
+                    Debug.Log("find quest");
+
+                    dialogueParser.dialogue = checkQuest.questDialogue;
+                    dialogueParser.StartTalk(canAcceptQuest[i].TargetNodeGUID);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void ProceedToNarrative(string narrativeDataGUID)
+        {
+            var buttons = acceptTransform.GetComponentsInChildren<Button>();
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                Destroy(buttons[i].gameObject);
+            }
+
+            questText.gameObject.SetActive(true);
+            acceptTransform.gameObject.SetActive(true);
+
             var currentQuest = quest.QuestNodeData.Find(x => x.NodeGUID == narrativeDataGUID);
 
             var text = quest.QuestNodeData.Find(x => x.NodeGUID == narrativeDataGUID).QuestText;
-            var choices = quest.NodeLinks.Where(x => x.BaseNodeGUID == narrativeDataGUID);
+
             questText.text = text;
 
             var button = Instantiate(acceptPrefab, acceptTransform);
             button.onClick.AddListener(() => ProcessAccept(currentQuest));
         }
 
+
         private void ProcessAccept(QuestNodeData currentQuest)
         {
-            var questText = Instantiate(textPrefab, questContainer);
-            questText.text = currentQuest.QuestText;
+            playerAction.State = PlayerState.Idle;
+            canAcceptQuest.Remove(quest.NodeLinks.Find(x => x.TargetNodeGUID == currentQuest.NodeGUID));
+
+            var questContainerText = Instantiate(textPrefab, questContainer);
+            questContainerText.text = currentQuest.QuestText;
 
             QuestSuccessCheck tmpQSC = new QuestSuccessCheck() { quest = currentQuest };
             AcceptedQuests.Add(tmpQSC);
+            
 
             if ((currentQuest.successConditionEnum & successCondition.ARRIVED) == successCondition.ARRIVED)
-                destinationContainer.Find(currentQuest.successCondition.destination.name).gameObject.SetActive(true);
+                destinationContainer.Find(currentQuest.successCondition.destination).gameObject.SetActive(true);
 
             if ((currentQuest.successConditionEnum & successCondition.COLLECT) == successCondition.COLLECT)
             {
                 for (int i = 0; i < currentQuest.successCondition.collection.Count(); ++i)
-                    collectObjectContainer.Find(currentQuest.successCondition.collection[i].name).gameObject.SetActive(true);
+                    collectObjectContainer.Find(currentQuest.successCondition.collection[i]).gameObject.SetActive(true);
                 UpdateCollectQuestText();
             }
 
             if ((currentQuest.successConditionEnum & successCondition.TIMELIMIT) == successCondition.TIMELIMIT)
                 StartCoroutine(Timer(currentQuest.successCondition.limitSec, currentQuest.NodeGUID));
-
-
-            //foreach (var exposedProperty in quest.ExposedProperties)
-            //{
-            //    text = text.Replace($"[{exposedProperty.PropertyName}]", exposedProperty.PropertyValue);
-            //}
-            //return text;
+            
+            questText.gameObject.SetActive(false);
+            acceptTransform.gameObject.SetActive(false);
         }
 
         public void CheckArrived(string guid)
@@ -128,22 +167,35 @@ namespace Subtegral.DialogueSystem.Runtime
             }
         }
 
-        public void CheckTalkPartner(GameObject partner)
+        public bool CheckTalkPartner(GameObject partner)
         {
-            if (AcceptedQuests.Find(x => x.quest.successCondition.obj == partner) != null)
+            QuestSuccessCheck talkPartner;
+            try
+            {
+                talkPartner = AcceptedQuests.Find(x => x.quest.successCondition.obj.name == partner.name);
+            }
+            catch (NullReferenceException e)
+            {
+                return false;
+            }
+
+            
+            if (talkPartner != null)
             {
                 var currentQuest = AcceptedQuests.Find(x => x.quest.successCondition.obj == partner);
 
                 var dialogueParser = this.gameObject.GetComponent<DialogueParser>();
                 dialogueParser.dialogue = currentQuest.quest.successCondition.dialogue;
-                dialogueParser.StartTalk();
+                dialogueParser.StartTalk("not quest give");
 
                 currentQuest.talked = true;
                 if (CheckQuestSuccess(currentQuest))
                     Successed(currentQuest);
 
                 Debug.Log("talk success");
+                return true;
             }
+            return false;
         }
 
         private IEnumerator Timer(float time, string guid)
@@ -238,6 +290,9 @@ namespace Subtegral.DialogueSystem.Runtime
 
         private void Successed(QuestSuccessCheck successedQuest)
         {
+            foreach (var quest in quest.NodeLinks.Where(x => x.BaseNodeGUID == successedQuest.quest.NodeGUID))
+                canAcceptQuest.Add(quest);
+
             Destroy(questContainer.GetChild(AcceptedQuests.IndexOf(successedQuest)).gameObject);
             AcceptedQuests.Remove(successedQuest);
             Debug.Log("Äù½ºÆ® ¿Ï·á!");
@@ -253,11 +308,12 @@ namespace Subtegral.DialogueSystem.Runtime
                 if ((quest.successConditionEnum & successCondition.COLLECT) == successCondition.COLLECT)
                 {
                     int count = 0;
-                    for (int j = 0; j < quest.successCondition.collection.Count(); ++j)
-                        if (collectObjectContainer.GetChild(j).gameObject.activeSelf == false)
+                    int collectNumber = quest.successCondition.collection.Count();
+                    for (int j = 0; j < collectObjectContainer.childCount; ++j)
+                        if (collectObjectContainer.GetChild(j).gameObject.activeSelf == true)
                             ++count;
 
-                    tmpText += " (" + count.ToString() + "/" + quest.successCondition.collection.Count().ToString() + ")";
+                    tmpText += " (" + (collectNumber - count).ToString() + "/" + collectNumber.ToString() + ")";
                 }
 
                 var questText = questContainer.GetChild(i);

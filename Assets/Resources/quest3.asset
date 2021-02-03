@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78b3fd9154634ebdb8c8a48960b9a16a, type: 3}
+  m_Name: quest3
+  m_EditorClassIdentifier: 
+  NodeLinks:
+  - BaseNodeGUID: 8dd51c7a-4ad4-450d-a716-9f60f61c22fa
+    PortName: Next
+    TargetNodeGUID: f98e367d-65ed-46b1-9b38-d0c760a071c9
+  - BaseNodeGUID: f98e367d-65ed-46b1-9b38-d0c760a071c9
+    PortName: "\uB124?"
+    TargetNodeGUID: 6f0a9e3b-3a50-40dd-83cc-5386df21befb
+  - BaseNodeGUID: f98e367d-65ed-46b1-9b38-d0c760a071c9
+    PortName: "\uBA38\uB77C\uAD6C\uC6A7"
+    TargetNodeGUID: d318d9b5-c362-4c76-8ccc-fdedb7764ed9
+  DialogueNodeData:
+  - NodeGUID: 6f0a9e3b-3a50-40dd-83cc-5386df21befb
+    DialogueText: "\uC5BC\uB978 \uAC00!!!!!!"
+    Position: {x: 496.8, y: 160}
+  - NodeGUID: d318d9b5-c362-4c76-8ccc-fdedb7764ed9
+    DialogueText: "\uAC00\uC11C \uB9D0 \uAC78\uC73C\uB77C\uACE0 !!!!!!!"
+    Position: {x: 503.2, y: 256.80002}
+  - NodeGUID: f98e367d-65ed-46b1-9b38-d0c760a071c9
+    DialogueText: "npc\uC640 \uB300\uD654\uB97C \uD558\uB834"
+    Position: {x: 242.4, y: 201.59999}
+  ExposedProperties: []
+  CommentBlockData: []

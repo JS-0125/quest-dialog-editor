@@ -14,13 +14,22 @@ namespace Subtegral.DialogueSystem.Runtime
         [SerializeField] public DialogueContainer dialogue;
         [SerializeField] private TextMeshProUGUI dialogueText;
         [SerializeField] private Button choicePrefab;
-        [SerializeField] private Button nextPrefab;
         [SerializeField] private Transform buttonContainer;
-        [SerializeField] private Transform nextButtonTransform;
+        [SerializeField] private PlayerAction playerAction;
 
+        private string questGuid = null;
+        private QuestParser questParser;
 
-        public void StartTalk()
+        private void Start()
         {
+            questParser = this.transform.GetComponent<QuestParser>();
+        }
+
+        public void StartTalk(string questGuid)
+        {
+            dialogueText.transform.parent.gameObject.SetActive(true);
+
+            this.questGuid = questGuid;
             var narrativeData = dialogue.NodeLinks.First(); //Entrypoint node
             ProceedToNarrative(narrativeData.TargetNodeGUID);
         }
@@ -40,7 +49,7 @@ namespace Subtegral.DialogueSystem.Runtime
             if (choices.Count() == 0)
             {
                 var choice = choices.ToList();
-                var button = Instantiate(nextPrefab, nextButtonTransform);
+                var button = Instantiate(choicePrefab, buttonContainer);
                 button.onClick.AddListener(() => EndDialogue());
                 return;
             }
@@ -49,7 +58,7 @@ namespace Subtegral.DialogueSystem.Runtime
             if (choices.Count() == 1)
             {
                 var choice = choices.ToList();
-                var button = Instantiate(nextPrefab, nextButtonTransform);
+                var button = Instantiate(choicePrefab, buttonContainer);
                 button.GetComponentInChildren<Text>().text = ProcessProperties(choice[0].PortName);
                 button.onClick.AddListener(() => ProceedToNarrative(choice[0].TargetNodeGUID));
                 return;
@@ -76,6 +85,14 @@ namespace Subtegral.DialogueSystem.Runtime
         private void EndDialogue()
         {
             dialogueText.transform.parent.gameObject.SetActive(false);
+            if (questGuid != "not quest give")
+            {
+                questParser.ProceedToNarrative(questGuid);
+                questGuid = null;
+                return;
+            }
+            questGuid = null;
+            playerAction.State = PlayerState.Idle;
         }
     }
 }

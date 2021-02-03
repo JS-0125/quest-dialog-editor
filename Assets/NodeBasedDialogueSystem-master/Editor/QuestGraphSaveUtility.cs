@@ -96,7 +96,8 @@ namespace Subtegral.DialogueSystem.Editor
                 {
                     NodeGUID = node.guid,
                     QuestText = node.questText,
-                    QeustGiver = node.questGiver,
+                    QeustGiver = node.questGiver.name,
+                    questDialogue = node.questDialogue,
                     successConditionEnum = node.successConditionEnum,
                     successCondition = node.successCondition,
                     Position = node.GetPosition().position
