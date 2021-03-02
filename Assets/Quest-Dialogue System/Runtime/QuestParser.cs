@@ -172,7 +172,7 @@ namespace Subtegral.DialogueSystem.Runtime
             QuestSuccessCheck talkPartner;
             try
             {
-                talkPartner = AcceptedQuests.Find(x => x.quest.successCondition.obj.name == partner.name);
+                talkPartner = AcceptedQuests.Find(x => x.quest.successCondition.obj == partner.name);
             }
             catch (NullReferenceException e)
             {
@@ -182,7 +182,7 @@ namespace Subtegral.DialogueSystem.Runtime
             
             if (talkPartner != null)
             {
-                var currentQuest = AcceptedQuests.Find(x => x.quest.successCondition.obj == partner);
+                var currentQuest = AcceptedQuests.Find(x => x.quest.successCondition.obj == partner.name);
 
                 var dialogueParser = this.gameObject.GetComponent<DialogueParser>();
                 dialogueParser.dialogue = currentQuest.quest.successCondition.dialogue;

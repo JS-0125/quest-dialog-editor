@@ -22,7 +22,7 @@ public class SuccessConditionObj
 {
     public string destination = null;
     public List<string> collection = new List<string>();
-    public GameObject obj = null;
+    public string obj = null;
     public DialogueContainer dialogue;
     public float limitSec;
 }

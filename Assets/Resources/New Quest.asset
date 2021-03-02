@@ -33,7 +33,7 @@ MonoBehaviour:
       collection:
       - Cube (1)
       - Cube (3)
-      obj: {fileID: 0}
+      obj: 
       dialogue: {fileID: 0}
       limitSec: 0
     Position: {x: 219.2, y: 178.4}
@@ -46,7 +46,7 @@ MonoBehaviour:
       destination: 
       collection:
       - Sphere
-      obj: {fileID: 0}
+      obj: 
       dialogue: {fileID: 0}
       limitSec: 0
     Position: {x: 632.8, y: 181.59999}
@@ -58,9 +58,9 @@ MonoBehaviour:
     successCondition:
       destination: 
       collection: []
-      obj: {fileID: 0}
+      obj: NPC
       dialogue: {fileID: 11400000, guid: ca7ba7993b7801c428ee1672bf86d88d, type: 2}
       limitSec: 0
-    Position: {x: 1040, y: 176.8}
+    Position: {x: 1043.2, y: 172.8}
   ExposedProperties: []
   CommentBlockData: []

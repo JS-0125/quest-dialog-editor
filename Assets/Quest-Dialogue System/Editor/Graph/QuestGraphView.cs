@@ -408,9 +408,29 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
             partner.objectType = typeof(GameObject);
             partner.RegisterValueChangedCallback(evt =>
             {
-                tempQuestNode.successCondition.obj = (GameObject)evt.newValue;
+                tempQuestNode.successCondition.obj = ((GameObject)evt.newValue).name;
             });
-            partner.SetValueWithoutNotify(tempQuestNode.successCondition?.obj ?? null);
+
+            if(tempQuestNode.successCondition.obj != null)
+            {
+                var obj = GameObject.Find(tempQuestNode.successCondition.obj);
+                if (obj != null)
+                {
+                    partner.SetValueWithoutNotify(obj);
+                    Debug.Log("set value" + obj.name);
+                }
+                else
+                {
+                    Debug.Log("can not Found Partner obj!");
+                    partner.SetValueWithoutNotify(null);
+                    tempQuestNode.successCondition.obj = null;
+                }
+            }
+            else
+            {
+                partner.SetValueWithoutNotify(null);
+                tempQuestNode.successCondition.obj = null;
+            }
             tempQuestNode.extensionContainer.Add(partner);
 
             var dialogue = new ObjectField("dialogue");
