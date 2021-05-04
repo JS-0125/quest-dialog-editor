@@ -15,7 +15,7 @@ namespace Subtegral.DialogueSystem.Runtime
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.tag == "Player")
+            if (other.gameObject.layer == LayerMask.NameToLayer("DestinationTarget"))
             {
                 this.gameObject.SetActive(false);
                 Camera camera = Camera.main;

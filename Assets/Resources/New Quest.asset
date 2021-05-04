@@ -30,6 +30,7 @@ MonoBehaviour:
     successConditionEnum: 3
     successCondition:
       destination: Sphere (1)
+      targetObject: Player Variant
       collection:
       - Cube (1)
       - Cube (3)
@@ -44,6 +45,7 @@ MonoBehaviour:
     successConditionEnum: 2
     successCondition:
       destination: 
+      targetObject: 
       collection:
       - Sphere
       obj: 
@@ -57,6 +59,7 @@ MonoBehaviour:
     successConditionEnum: 4
     successCondition:
       destination: 
+      targetObject: 
       collection: []
       obj: NPC
       dialogue: {fileID: 11400000, guid: ca7ba7993b7801c428ee1672bf86d88d, type: 2}

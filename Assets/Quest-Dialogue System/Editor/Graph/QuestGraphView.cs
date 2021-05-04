@@ -281,6 +281,52 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
                 tempQuestNode.successCondition.destination = null;
             }
             tempQuestNode.extensionContainer.Add(destination);
+
+            // target obj
+            var target = new ObjectField("Target Object");
+            target.allowSceneObjects = true;
+            target.objectType = typeof(GameObject);
+            target.RegisterValueChangedCallback(evt =>
+            {
+                if (tempQuestNode.successCondition.targetObject != null)
+                {
+                    var previousObject = tempQuestNode.successCondition.targetObject;
+
+                    var previousValue = GameObject.Find(previousObject);
+                    previousValue.layer = LayerMask.NameToLayer("Default");
+
+                    if (evt.newValue == null)
+                    {
+                        tempQuestNode.successCondition.targetObject = null;
+                        return;
+                    }
+
+                    var targetObj = (GameObject)evt.newValue;
+
+                    targetObj.layer = LayerMask.NameToLayer("DestinationTarget");
+
+                    tempQuestNode.successCondition.targetObject = targetObj.name;
+                }
+                else
+                {
+                    if (evt.newValue == null)
+                        return;
+                    var targetObj = (GameObject)evt.newValue;
+
+                    targetObj.layer = LayerMask.NameToLayer("DestinationTarget");
+
+                    tempQuestNode.successCondition.targetObject = targetObj.name;
+                }
+            });
+            obj = GameObject.Find(tempQuestNode.successCondition.targetObject);
+            if (obj != null)
+                target.SetValueWithoutNotify(obj);
+            else
+            {
+                target.SetValueWithoutNotify(null);
+                tempQuestNode.successCondition.targetObject = null;
+            }
+            tempQuestNode.extensionContainer.Add(target);
         }
 
         if ((condition & successCondition.COLLECT) == successCondition.COLLECT)
