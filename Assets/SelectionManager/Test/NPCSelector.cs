@@ -56,12 +56,17 @@ public class NPCSelector : MonoBehaviour
                 {
                     playerAction.State = PlayerState.Talk;
                 }
-
-                if (questParser.CheckTalkPartner(_selection.gameObject))
+                else if (questParser.CheckTalkPartner(_selection.gameObject))
                 {
                     playerAction.State = PlayerState.Talk;
                 }
-
+                else if(_selection.GetComponent<NPC>().dialogue != null)
+                {
+                    playerAction.State = PlayerState.Talk;
+                    DialogueParser dialogueParser = Camera.main.GetComponent<DialogueParser>();
+                    dialogueParser.dialogue = _selection.GetComponent<NPC>().dialogue;
+                    dialogueParser.StartTalk("not quest give");
+                }
             }
         }
     }

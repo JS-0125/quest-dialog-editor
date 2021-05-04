@@ -1,8 +1,10 @@
+using Subtegral.DialogueSystem.DataContainers;
 using UnityEngine;
 
 public class NPC : OutlineObject
 {
     private Transform _modelTransform;  // ¸ðµ¨ º»Ã¼ÀÇ transform
+    public DialogueContainer dialogue;
 
     public Transform ModelTransform
     {

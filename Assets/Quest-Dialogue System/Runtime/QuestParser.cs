@@ -126,7 +126,6 @@ namespace Subtegral.DialogueSystem.Runtime
             {
                 destinationContainer.Find(currentQuest.successCondition.destination).gameObject.SetActive(true);
                 GameObject.Find(currentQuest.successCondition.targetObject).gameObject.layer = LayerMask.NameToLayer("DestinationTarget");
-
             }
 
             if ((currentQuest.successConditionEnum & successCondition.COLLECT) == successCondition.COLLECT)
