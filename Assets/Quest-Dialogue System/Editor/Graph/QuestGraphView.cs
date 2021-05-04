@@ -288,35 +288,13 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
             target.objectType = typeof(GameObject);
             target.RegisterValueChangedCallback(evt =>
             {
-                if (tempQuestNode.successCondition.targetObject != null)
+                if (evt.newValue == null)
                 {
-                    var previousObject = tempQuestNode.successCondition.targetObject;
-
-                    var previousValue = GameObject.Find(previousObject);
-                    previousValue.layer = LayerMask.NameToLayer("Default");
-
-                    if (evt.newValue == null)
-                    {
-                        tempQuestNode.successCondition.targetObject = null;
-                        return;
-                    }
-
-                    var targetObj = (GameObject)evt.newValue;
-
-                    targetObj.layer = LayerMask.NameToLayer("DestinationTarget");
-
-                    tempQuestNode.successCondition.targetObject = targetObj.name;
+                    tempQuestNode.successCondition.targetObject = null;
+                    return;
                 }
-                else
-                {
-                    if (evt.newValue == null)
-                        return;
-                    var targetObj = (GameObject)evt.newValue;
-
-                    targetObj.layer = LayerMask.NameToLayer("DestinationTarget");
-
-                    tempQuestNode.successCondition.targetObject = targetObj.name;
-                }
+                var targetObj = (GameObject)evt.newValue;
+                tempQuestNode.successCondition.targetObject = targetObj.name;
             });
             obj = GameObject.Find(tempQuestNode.successCondition.targetObject);
             if (obj != null)

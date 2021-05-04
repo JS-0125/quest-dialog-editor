@@ -123,7 +123,11 @@ namespace Subtegral.DialogueSystem.Runtime
             
 
             if ((currentQuest.successConditionEnum & successCondition.ARRIVED) == successCondition.ARRIVED)
+            {
                 destinationContainer.Find(currentQuest.successCondition.destination).gameObject.SetActive(true);
+                GameObject.Find(currentQuest.successCondition.targetObject).gameObject.layer = LayerMask.NameToLayer("DestinationTarget");
+
+            }
 
             if ((currentQuest.successConditionEnum & successCondition.COLLECT) == successCondition.COLLECT)
             {
@@ -144,6 +148,8 @@ namespace Subtegral.DialogueSystem.Runtime
             var currentQuest = AcceptedQuests.Find(x => x.quest.NodeGUID == guid);
 
             currentQuest.arrived = true;
+            GameObject.Find(currentQuest.quest.successCondition.targetObject).gameObject.layer = LayerMask.NameToLayer("Default");
+
             if (CheckQuestSuccess(currentQuest))
                 Successed(currentQuest);
 
