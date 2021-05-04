@@ -21,7 +21,7 @@ public enum successCondition
 public class SuccessConditionObj
 {
     public string destination = null;
-    public string targetObject = null;
+    public List<string> targetObject = new List<string>();
     public List<string> collection = new List<string>();
     public string obj = null;
     public DialogueContainer dialogue;

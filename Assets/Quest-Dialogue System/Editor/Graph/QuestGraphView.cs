@@ -283,29 +283,92 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
             tempQuestNode.extensionContainer.Add(destination);
 
             // target obj
-            var target = new ObjectField("Target Object");
-            target.allowSceneObjects = true;
-            target.objectType = typeof(GameObject);
-            target.RegisterValueChangedCallback(evt =>
-            {
-                if (evt.newValue == null)
+            var button = new Button(() => {
+                var target = new ObjectField("Target Object");
+                target.allowSceneObjects = true;
+                target.objectType = typeof(GameObject);
+                tempQuestNode.successCondition.targetObject.Add(null);
+
+                target.RegisterValueChangedCallback(evt =>
                 {
-                    tempQuestNode.successCondition.targetObject = null;
-                    return;
-                }
-                var targetObj = (GameObject)evt.newValue;
-                tempQuestNode.successCondition.targetObject = targetObj.name;
-            });
-            obj = GameObject.Find(tempQuestNode.successCondition.targetObject);
-            if (obj != null)
-                target.SetValueWithoutNotify(obj);
-            else
+                    if (evt.previousValue != null)
+                    {
+                        var previousObject = tempQuestNode.successCondition.targetObject.Find(x => x == evt.previousValue.name);
+                        int index = tempQuestNode.successCondition.targetObject.IndexOf(previousObject);
+
+                        if (evt.newValue == null)
+                        {
+                            tempQuestNode.successCondition.targetObject = null;
+                            return;
+                        }
+
+                        tempQuestNode.successCondition.targetObject[index] = evt.newValue.name;
+                    }
+                    else
+                    {
+                        if (evt.newValue == null)
+                            return;
+                        int index = tempQuestNode.successCondition.targetObject.IndexOf(tempQuestNode.successCondition.targetObject.Find(x => x == null));
+                        tempQuestNode.successCondition.targetObject[index] = evt.newValue.name;
+                    }
+                });
+                tempQuestNode.extensionContainer.Add(target);
+            })
             {
-                target.SetValueWithoutNotify(null);
-                tempQuestNode.successCondition.targetObject = null;
+                text = "Add Target Object"
+            };
+            tempQuestNode.extensionContainer.Add(button);
+
+            if (tempQuestNode.successCondition.targetObject.Count() != 0)
+            {
+                for (int i = 0; i < tempQuestNode.successCondition.targetObject.Count(); ++i)
+                {
+                    var target = new ObjectField("Target Object");
+                    target.allowSceneObjects = true;
+                    target.objectType = typeof(GameObject);
+                    target.RegisterValueChangedCallback(evt =>
+                    {
+                        if (evt.previousValue != null)
+                        {
+                            string previousObject = tempQuestNode.successCondition.targetObject.Find(x => x == evt.previousValue.name);
+                            var index = tempQuestNode.successCondition.targetObject.IndexOf(previousObject);
+
+                            if (evt.newValue == null)
+                            {
+                                tempQuestNode.successCondition.targetObject = null;
+                                return;
+                            }
+
+                            if (index == -1)
+                            {
+                                var tmp = tempQuestNode.successCondition.targetObject.Find(x => x == null);
+                                tmp = evt.newValue.name;
+                            }
+                            else
+                                tempQuestNode.successCondition.targetObject[index] = evt.newValue.name;
+                        }
+                        else
+                        {
+                            if (evt.newValue == null)
+                                return;
+                            int index = tempQuestNode.successCondition.targetObject.IndexOf(tempQuestNode.successCondition.targetObject.Find(x => x == null));
+                            tempQuestNode.successCondition.targetObject[index] = evt.newValue.name;
+                        }
+
+                    });
+                    obj = GameObject.Find(tempQuestNode.successCondition.targetObject[i]);
+                    if (obj != null)
+                        target.SetValueWithoutNotify(obj);
+                    else
+                    {
+                        target.SetValueWithoutNotify(null);
+                        tempQuestNode.successCondition.targetObject[i] = null;
+                    }
+                    tempQuestNode.extensionContainer.Add(target);
+                }
             }
-            tempQuestNode.extensionContainer.Add(target);
         }
+
 
         if ((condition & successCondition.COLLECT) == successCondition.COLLECT)
         {
@@ -329,7 +392,7 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
 
                         if (evt.newValue == null)
                         {
-                            tempQuestNode.successCondition.destination = null;
+                            tempQuestNode.successCondition.collection[index] = null;
                             return;
                         }
 
@@ -381,7 +444,7 @@ public class QuestGraphView : AbstractGraph // Inherits from:UIElements.VisualEl
 
                             if (evt.newValue == null)
                             {
-                                tempQuestNode.successCondition.destination = null;
+                                tempQuestNode.successCondition.collection[index] = null;
                                 return;
                             }
 
